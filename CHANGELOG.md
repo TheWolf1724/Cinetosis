@@ -20,6 +20,10 @@ y el proyecto sigue el [Versionado Semántico](https://semver.org/lang/es/).
 ### Cambiado
 - `MotionEngine` ahora reutiliza `MotionMath` (filtro paso-bajo y mapeo de ejes), eliminando la
   duplicación y haciendo la lógica testeable.
+- Sincronizado el proyecto con Android Studio: wrapper a **Gradle 9.4.1**, catálogo de versiones
+  ampliado (Material, AndroidX Test) y `testInstrumentationRunner` configurado.
+- El icono usa solo el formato adaptativo vectorial (eliminados los `webp` por densidad y el tema
+  noche autogenerado, redundante con `Theme.AppCompat.DayNight`).
 
 ## [0.1.0] - 2026-06-19
 
