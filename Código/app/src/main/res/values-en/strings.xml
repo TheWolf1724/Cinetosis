@@ -26,6 +26,12 @@
     <string name="dots_per_edge">Dots per edge</string>
     <string name="dot_size">Dot size</string>
     <string name="adaptive_color">Automatic color (light/dark)</string>
+    <string name="section_color">Dot color</string>
+    <string name="color_default">Default (light/dark)</string>
+    <string name="color_custom">Custom</string>
+    <string name="color_red">Red</string>
+    <string name="color_green">Green</string>
+    <string name="color_blue">Blue</string>
 
     <string name="section_edges">Active edges</string>
     <string name="edge_top">Top edge</string>

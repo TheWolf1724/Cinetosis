@@ -1,6 +1,7 @@
 package com.thewolf1724.cinetosis.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.thewolf1724.cinetosis.R
 import com.thewolf1724.cinetosis.data.Settings
+import com.thewolf1724.cinetosis.overlay.DotColors
 import com.thewolf1724.cinetosis.overlay.DotsView
 import kotlinx.coroutines.delay
 
@@ -46,6 +48,7 @@ private class DemoMotion {
 fun MotionPreview(settings: Settings, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val density = LocalDensity.current.density
+    val darkTheme = isSystemInDarkTheme()
     val motion = remember { DemoMotion() }
     var playing by remember { mutableStateOf(true) }
     var label by remember { mutableStateOf(context.getString(R.string.demo_idle)) }
@@ -90,9 +93,10 @@ fun MotionPreview(settings: Settings, modifier: Modifier = Modifier) {
                 factory = { ctx -> DotsView(ctx) { motion.x to motion.y } },
                 update = { v ->
                     v.setInsets(0, 0, 0, 0)
-                    // En la preview usamos blanco con halo oscuro para evidenciar el contorno.
-                    v.dotColor = 0xF2FFFFFF.toInt()
-                    v.haloColor = 0x99000000.toInt()
+                    // Refleja el color elegido (por defecto adaptativo o personalizado) con su halo.
+                    val (fill, halo) = DotColors.fillAndHalo(settings.adaptiveColor, settings.colorArgb, darkTheme)
+                    v.dotColor = fill
+                    v.haloColor = halo
                     v.dotRadiusPx = settings.dotSizeDp * density
                     v.dotsPerEdge = settings.dotsPerEdge
                     v.maxShiftPx = (16f + settings.amplitude * 54f) * density

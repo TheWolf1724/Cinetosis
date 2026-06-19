@@ -14,7 +14,6 @@ import android.service.quicksettings.TileService
 import android.view.Gravity
 import android.view.WindowManager
 import androidx.core.app.NotificationCompat
-import androidx.core.graphics.ColorUtils
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.thewolf1724.cinetosis.CinetosisApp
@@ -22,6 +21,7 @@ import com.thewolf1724.cinetosis.MainActivity
 import com.thewolf1724.cinetosis.R
 import com.thewolf1724.cinetosis.data.SettingsRepository
 import com.thewolf1724.cinetosis.motion.MotionEngine
+import com.thewolf1724.cinetosis.overlay.DotColors
 import com.thewolf1724.cinetosis.overlay.DotsView
 import com.thewolf1724.cinetosis.tile.CinetosisTileService
 import kotlinx.coroutines.CoroutineScope
@@ -130,18 +130,9 @@ class OverlayService : Service() {
     }
 
     private fun applyColors(view: DotsView, adaptive: Boolean, colorArgb: Int, night: Boolean) {
-        if (adaptive) {
-            // Color base según el tema del sistema; el halo da contraste sobre cualquier fondo.
-            view.dotColor = if (night) 0xF2FFFFFF.toInt() else 0xF21A1A1A.toInt()
-            view.haloColor = if (night) 0x80000000.toInt() else 0x80FFFFFF.toInt()
-        } else {
-            view.dotColor = colorArgb
-            view.haloColor = if (ColorUtils.calculateLuminance(colorArgb) > 0.5) {
-                0x80000000.toInt()
-            } else {
-                0x80FFFFFF.toInt()
-            }
-        }
+        val (fill, halo) = DotColors.fillAndHalo(adaptive, colorArgb, night)
+        view.dotColor = fill
+        view.haloColor = halo
     }
 
     private fun startForegroundCompat() {

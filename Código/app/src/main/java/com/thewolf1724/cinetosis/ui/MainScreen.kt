@@ -1,10 +1,16 @@
 package com.thewolf1724.cinetosis.ui
 
 import android.Manifest
+import android.graphics.Color as AndroidColor
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +20,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Dashboard
@@ -42,6 +49,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -184,9 +193,12 @@ fun MainScreen() {
                 range = 2f..12f,
                 onChange = { v -> scope.launch { repository.update { it.copy(dotSizeDp = v) } } },
             )
-            EdgeToggle(stringResource(R.string.adaptive_color), settings.adaptiveColor) { c ->
-                scope.launch { repository.update { it.copy(adaptiveColor = c) } }
-            }
+            Spacer(Modifier.height(16.dp))
+            ColorSection(
+                settings = settings,
+                onAdaptive = { v -> scope.launch { repository.update { it.copy(adaptiveColor = v) } } },
+                onColor = { argb -> scope.launch { repository.update { it.copy(colorArgb = argb) } } },
+            )
 
             Spacer(Modifier.height(16.dp))
             Text(stringResource(R.string.section_test), style = MaterialTheme.typography.titleMedium)
@@ -331,6 +343,78 @@ private fun DetectionSection(
             Text(stringResource(R.string.detect_location_note), style = MaterialTheme.typography.bodySmall)
         }
     }
+}
+
+private val COLOR_SWATCHES: List<Int> = listOf(
+    0xFFFFFFFF, 0xFF000000, 0xFFF44336, 0xFFFF9800, 0xFFFFEB3B,
+    0xFF4CAF50, 0xFF00BCD4, 0xFF2196F3, 0xFF9C27B0, 0xFFE91E63,
+).map { it.toInt() }
+
+private fun sameRgb(a: Int, b: Int): Boolean = (a and 0x00FFFFFF) == (b and 0x00FFFFFF)
+private fun opaque(argb: Int): Int = argb or (0xFF shl 24)
+private fun withRed(c: Int, r: Int): Int = AndroidColor.argb(AndroidColor.alpha(c), r, AndroidColor.green(c), AndroidColor.blue(c))
+private fun withGreen(c: Int, g: Int): Int = AndroidColor.argb(AndroidColor.alpha(c), AndroidColor.red(c), g, AndroidColor.blue(c))
+private fun withBlue(c: Int, b: Int): Int = AndroidColor.argb(AndroidColor.alpha(c), AndroidColor.red(c), AndroidColor.green(c), b)
+
+@Composable
+private fun ColorSection(
+    settings: Settings,
+    onAdaptive: (Boolean) -> Unit,
+    onColor: (Int) -> Unit,
+) {
+    Text(stringResource(R.string.section_color), style = MaterialTheme.typography.titleMedium)
+    ModeOption(stringResource(R.string.color_default), settings.adaptiveColor) { onAdaptive(true) }
+    ModeOption(stringResource(R.string.color_custom), !settings.adaptiveColor) { onAdaptive(false) }
+
+    if (!settings.adaptiveColor) {
+        Spacer(Modifier.height(8.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            COLOR_SWATCHES.forEach { argb ->
+                Swatch(argb, selected = sameRgb(argb, settings.colorArgb)) { onColor(opaque(argb)) }
+            }
+        }
+        val c = settings.colorArgb
+        LabeledSlider(
+            label = stringResource(R.string.color_red) + ": ${AndroidColor.red(c)}",
+            value = AndroidColor.red(c).toFloat(),
+            range = 0f..255f,
+            onChange = { v -> onColor(withRed(c, v.roundToInt())) },
+        )
+        LabeledSlider(
+            label = stringResource(R.string.color_green) + ": ${AndroidColor.green(c)}",
+            value = AndroidColor.green(c).toFloat(),
+            range = 0f..255f,
+            onChange = { v -> onColor(withGreen(c, v.roundToInt())) },
+        )
+        LabeledSlider(
+            label = stringResource(R.string.color_blue) + ": ${AndroidColor.blue(c)}",
+            value = AndroidColor.blue(c).toFloat(),
+            range = 0f..255f,
+            onChange = { v -> onColor(withBlue(c, v.roundToInt())) },
+        )
+    }
+}
+
+@Composable
+private fun Swatch(argb: Int, selected: Boolean, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .padding(4.dp)
+            .size(40.dp)
+            .clip(CircleShape)
+            .background(Color(argb))
+            .border(
+                width = if (selected) 3.dp else 1.dp,
+                color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                shape = CircleShape,
+            )
+            .clickable(onClick = onClick),
+    )
 }
 
 @Composable

@@ -8,6 +8,10 @@ y el proyecto sigue el [Versionado Semántico](https://semver.org/lang/es/).
 ## [No publicado]
 
 ### Añadido
+- **Selector de color manual** de los puntos en ajustes: «Por defecto» (adaptativo claro/oscuro) o
+  «Personalizado», con paleta de colores y ajuste fino RGB. Se modifica solo el **relleno**; el
+  **halo/contorno** se mantiene automático para que el punto siga viéndose sobre cualquier fondo.
+  El cálculo de relleno+halo se centraliza en `DotColors` (usado por el overlay y la vista previa).
 - **Detección automática de "voy en coche"** (`DetectionService` + `VehicleClassifier`): enciende
   los indicadores solo al detectar un vehículo (apagado manual). **Selector de 3 modos offline**:
   *Batería* (movimiento significativo + acelerómetro, mínimo consumo, por defecto), *Equilibrado* y

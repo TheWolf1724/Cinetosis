@@ -26,6 +26,12 @@
     <string name="dots_per_edge">Puntos por borde</string>
     <string name="dot_size">Tamaño del punto</string>
     <string name="adaptive_color">Color automático (claro/oscuro)</string>
+    <string name="section_color">Color de los puntos</string>
+    <string name="color_default">Por defecto (claro/oscuro)</string>
+    <string name="color_custom">Personalizado</string>
+    <string name="color_red">Rojo</string>
+    <string name="color_green">Verde</string>
+    <string name="color_blue">Azul</string>
 
     <string name="section_edges">Bordes activos</string>
     <string name="edge_top">Borde superior</string>
