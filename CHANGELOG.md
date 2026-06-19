@@ -8,7 +8,18 @@ y el proyecto sigue el [Versionado Semántico](https://semver.org/lang/es/).
 ## [No publicado]
 
 ### Añadido
-- _En desarrollo en la rama `dev`._
+- **Política de privacidad** bilingüe ([`PRIVACY.md`](PRIVACY.md)): la app no recopila datos.
+- **Internacionalización (ES/EN)** con recursos `values/` (español) y `values-en/` (inglés).
+- **Selector de idioma** en caliente desde los ajustes (Sistema / Español / English) mediante
+  `AppCompatDelegate.setApplicationLocales` y `locales_config.xml`.
+- **Tests unitarios** de la lógica de movimiento (`MotionMathTest`) sobre la nueva clase pura
+  `MotionMath` (extraída de `MotionEngine`).
+- **Icono de la app rediseñado**: icono adaptativo vectorial con fondo en degradado, pantalla con
+  puntos de movimiento en los bordes y variante monocroma para iconos temáticos.
+
+### Cambiado
+- `MotionEngine` ahora reutiliza `MotionMath` (filtro paso-bajo y mapeo de ejes), eliminando la
+  duplicación y haciendo la lógica testeable.
 
 ## [0.1.0] - 2026-06-19
 

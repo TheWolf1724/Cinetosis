@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cinetosis</string>
+
+    <!-- Quick Settings Tile -->
+    <string name="tile_label">Cinetosis</string>
+    <string name="tile_state_on">Cues active</string>
+    <string name="tile_state_off">Cues off</string>
+
+    <!-- Foreground service notification -->
+    <string name="notif_channel_name">Motion cues</string>
+    <string name="notif_channel_desc">Notification for the service that shows the motion dots.</string>
+    <string name="notif_title">Cinetosis is on</string>
+    <string name="notif_text">Showing motion cues to help reduce car sickness.</string>
+
+    <!-- Main screen -->
+    <string name="intro_text">Cinetosis draws dots at the edges of the screen that move with the car\'s acceleration. This way what you see matches what your body feels, reducing motion sickness.</string>
+    <string name="permission_needed">To show the dots over other apps (maps, books, etc.) you need to grant the “Display over other apps” permission.</string>
+    <string name="grant_permission">Grant permission</string>
+    <string name="start_overlay">Turn on cues</string>
+    <string name="stop_overlay">Turn off cues</string>
+
+    <string name="section_appearance">Appearance</string>
+    <string name="sensitivity">Sensitivity</string>
+    <string name="dots_per_edge">Dots per edge</string>
+    <string name="dot_size">Dot size</string>
+
+    <string name="section_edges">Active edges</string>
+    <string name="edge_top">Top edge</string>
+    <string name="edge_bottom">Bottom edge</string>
+    <string name="edge_left">Left edge</string>
+    <string name="edge_right">Right edge</string>
+
+    <string name="disclaimer">Cinetosis is an aid, not a medical device. Do not use it while driving.</string>
+
+    <!-- Language selector -->
+    <string name="section_language">Language</string>
+    <string name="language_system">System default</string>
+    <string name="language_spanish">Español</string>
+    <string name="language_english">English</string>
+</resources>

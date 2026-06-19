@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.appcompat)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
@@ -71,4 +72,6 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
 
     debugImplementation(libs.androidx.ui.tooling)
+
+    testImplementation(libs.junit)
 }

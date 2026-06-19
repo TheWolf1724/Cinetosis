@@ -47,7 +47,9 @@ reduciendo el conflicto sensorial y, con ello, el mareo.
 - ⚙️ **Pantalla de ajustes** para personalizar sensibilidad, número y tamaño de los puntos,
   color/tema y bordes activos.
 - 🔒 **100 % offline y sin telemetría:** no pide internet, no recopila datos, no envía nada a
-  ningún servidor. Solo usa los sensores de movimiento del dispositivo.
+  ningún servidor. Solo usa los sensores de movimiento del dispositivo. Ver
+  [política de privacidad](PRIVACY.md).
+- 🌍 **Bilingüe (español / inglés)** con selector de idioma integrado en los ajustes.
 - 🆓 **Libre y gratuita** (MIT).
 
 ## Requisitos

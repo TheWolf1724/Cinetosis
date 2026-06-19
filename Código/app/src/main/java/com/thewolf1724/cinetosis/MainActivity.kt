@@ -5,7 +5,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings as AndroidSettings
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +22,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
@@ -41,6 +41,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.thewolf1724.cinetosis.data.Settings
@@ -51,7 +54,7 @@ import androidx.compose.runtime.DisposableEffect
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -194,6 +197,13 @@ private fun CinetosisScreen() {
                 scope.launch { repository.update { it.copy(edgeRight = c) } }
             }
 
+            Spacer(Modifier.height(16.dp))
+            Text(
+                stringRes(context, R.string.section_language),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            LanguageSelector()
+
             Spacer(Modifier.height(24.dp))
             Text(
                 text = stringRes(context, R.string.disclaimer),
@@ -241,6 +251,48 @@ private fun EdgeToggle(label: String, checked: Boolean, onChange: (Boolean) -> U
     ) {
         Text(label, style = MaterialTheme.typography.bodyLarge)
         Switch(checked = checked, onCheckedChange = onChange)
+    }
+}
+
+/**
+ * Selector de idioma. Aplica el cambio en caliente mediante AppCompat
+ * ([AppCompatDelegate.setApplicationLocales]), que recrea la actividad con el nuevo idioma.
+ */
+@Composable
+private fun LanguageSelector() {
+    val context = LocalContext.current
+    // Etiqueta de idioma actual ("" = predeterminado del sistema).
+    val current = AppCompatDelegate.getApplicationLocales().toLanguageTags()
+        .substringBefore('-')
+
+    val options = listOf(
+        "" to stringRes(context, R.string.language_system),
+        "es" to stringRes(context, R.string.language_spanish),
+        "en" to stringRes(context, R.string.language_english),
+    )
+
+    Column(Modifier.fillMaxWidth()) {
+        options.forEach { (tag, label) ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 2.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                RadioButton(
+                    selected = current == tag,
+                    onClick = {
+                        val locales = if (tag.isEmpty()) {
+                            LocaleListCompat.getEmptyLocaleList()
+                        } else {
+                            LocaleListCompat.forLanguageTags(tag)
+                        }
+                        AppCompatDelegate.setApplicationLocales(locales)
+                    },
+                )
+                Text(label, style = MaterialTheme.typography.bodyLarge)
+            }
+        }
     }
 }
 

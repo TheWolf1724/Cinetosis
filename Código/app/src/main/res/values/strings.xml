@@ -32,4 +32,10 @@
     <string name="edge_right">Borde derecho</string>
 
     <string name="disclaimer">Cinetosis es una ayuda, no un dispositivo médico. No la uses mientras conduces.</string>
+
+    <!-- Selector de idioma -->
+    <string name="section_language">Idioma</string>
+    <string name="language_system">Predeterminado del sistema</string>
+    <string name="language_spanish">Español</string>
+    <string name="language_english">English</string>
 </resources>

@@ -5,7 +5,6 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import kotlin.math.abs
 
 /**
  * Motor de movimiento. Se suscribe al acelerómetro lineal y al giroscopio, filtra la señal y
@@ -67,29 +66,19 @@ class MotionEngine(context: Context) : SensorEventListener {
     override fun onSensorChanged(event: SensorEvent) {
         when (event.sensor.type) {
             Sensor.TYPE_LINEAR_ACCELERATION -> {
-                filtX += alpha * (event.values[0] - filtX)
-                filtY += alpha * (event.values[1] - filtY)
+                filtX = MotionMath.lowPass(filtX, event.values[0], alpha)
+                filtY = MotionMath.lowPass(filtY, event.values[1], alpha)
             }
             Sensor.TYPE_GYROSCOPE -> {
                 // Velocidad angular alrededor del eje vertical del teléfono (viraje del vehículo).
-                gyroZ += alpha * (event.values[2] - gyroZ)
+                gyroZ = MotionMath.lowPass(gyroZ, event.values[2], alpha)
             }
             else -> return
         }
 
         val lateral = filtX + gyroZ * 1.5f
-        motionX = mapAxis(lateral)
-        motionY = -mapAxis(filtY)
-    }
-
-    /** Aplica zona muerta, escalado por sensibilidad y normaliza a [-1, 1]. */
-    private fun mapAxis(value: Float): Float {
-        val sign = if (value >= 0f) 1f else -1f
-        val magnitude = abs(value)
-        if (magnitude < deadZone) return 0f
-        val scaled = (magnitude - deadZone) / (maxAccel - deadZone)
-        val gain = 0.4f + sensitivity * 1.2f
-        return (sign * scaled.coerceIn(0f, 1f) * gain).coerceIn(-1f, 1f)
+        motionX = MotionMath.mapAxis(lateral, deadZone, maxAccel, sensitivity)
+        motionY = -MotionMath.mapAxis(filtY, deadZone, maxAccel, sensitivity)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) { /* no-op */ }

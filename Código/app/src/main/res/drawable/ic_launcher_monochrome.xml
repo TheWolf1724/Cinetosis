@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Contorno del teléfono (sin relleno, para que la silueta teñida sea reconocible) -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.2"
+        android:fillColor="#00000000"
+        android:pathData="M49,28 L59,28 Q66,28 66,35 L66,73 Q66,80 59,80 L49,80 Q42,80 42,73 L42,35 Q42,28 49,28 Z" />
+
+    <!-- Puntos de los bordes -->
+    <path android:fillColor="#FFFFFF" android:pathData="M48,40 m-2.6,0 a2.6,2.6 0 1,0 5.2,0 a2.6,2.6 0 1,0 -5.2,0 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M48,54 m-2.6,0 a2.6,2.6 0 1,0 5.2,0 a2.6,2.6 0 1,0 -5.2,0 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M48,68 m-2.6,0 a2.6,2.6 0 1,0 5.2,0 a2.6,2.6 0 1,0 -5.2,0 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M60,45 m-2.6,0 a2.6,2.6 0 1,0 5.2,0 a2.6,2.6 0 1,0 -5.2,0 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M60,59 m-2.6,0 a2.6,2.6 0 1,0 5.2,0 a2.6,2.6 0 1,0 -5.2,0 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M60,73 m-2.6,0 a2.6,2.6 0 1,0 5.2,0 a2.6,2.6 0 1,0 -5.2,0 Z" />
+
+    <!-- Flecha de movimiento -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,50 L59,58 L55,58 L55,66 L53,66 L53,58 L49,58 Z" />
+</vector>
