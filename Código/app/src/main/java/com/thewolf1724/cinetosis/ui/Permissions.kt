@@ -27,6 +27,13 @@ object Permissions {
             Uri.parse("package:${context.packageName}"),
         )
 
+    /** ¿Está concedido el permiso de ubicación fina? (Solo para los modos de detección con GPS.) */
+    fun hasLocation(context: Context): Boolean =
+        ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.ACCESS_FINE_LOCATION,
+        ) == PackageManager.PERMISSION_GRANTED
+
     /** ¿Está concedido el permiso de notificaciones? (En Android 12 e inferiores no hace falta.) */
     fun hasNotifications(context: Context): Boolean =
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {

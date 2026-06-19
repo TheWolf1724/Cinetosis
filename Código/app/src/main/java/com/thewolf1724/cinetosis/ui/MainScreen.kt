@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,8 +52,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.thewolf1724.cinetosis.R
+import com.thewolf1724.cinetosis.data.DetectionMode
 import com.thewolf1724.cinetosis.data.Settings
 import com.thewolf1724.cinetosis.data.SettingsRepository
+import com.thewolf1724.cinetosis.service.DetectionService
 import com.thewolf1724.cinetosis.service.OverlayService
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -83,6 +86,19 @@ fun MainScreen() {
     val notificationPermission = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { /* el resultado no bloquea el flujo */ }
+
+    val locationPermission = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { /* si se deniega, los modos GPS caen a detección por sensores */ }
+
+    // Mantiene el servicio de detección en marcha cuando procede (auto-encendido invisible).
+    LaunchedEffect(settings.autoDetect, settings.detectionMode, canDrawOverlay) {
+        if (settings.autoDetect && canDrawOverlay) {
+            DetectionService.start(context, fromBoot = false)
+        } else if (DetectionService.isRunning) {
+            DetectionService.stop(context)
+        }
+    }
 
     fun toggleOverlay() {
         if (serviceRunning) {
@@ -126,6 +142,19 @@ fun MainScreen() {
 
             // Consejo + botón para añadir el acceso rápido (tile)
             TileCard()
+
+            Spacer(Modifier.height(24.dp))
+            DetectionSection(
+                settings = settings,
+                onAutoDetect = { v -> scope.launch { repository.update { it.copy(autoDetect = v) } } },
+                onMode = { m ->
+                    scope.launch { repository.update { it.copy(detectionMode = m) } }
+                    if (m != DetectionMode.BATTERY && !Permissions.hasLocation(context)) {
+                        locationPermission.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    }
+                },
+                onBoot = { v -> scope.launch { repository.update { it.copy(autoStartOnBoot = v) } } },
+            )
 
             Spacer(Modifier.height(24.dp))
             Text(stringResource(R.string.section_appearance), style = MaterialTheme.typography.titleMedium)
@@ -269,6 +298,49 @@ private fun ActionCard(text: String, buttonText: String, onClick: () -> Unit) {
                 Text(buttonText)
             }
         }
+    }
+}
+
+@Composable
+private fun DetectionSection(
+    settings: Settings,
+    onAutoDetect: (Boolean) -> Unit,
+    onMode: (DetectionMode) -> Unit,
+    onBoot: (Boolean) -> Unit,
+) {
+    Text(stringResource(R.string.section_detection), style = MaterialTheme.typography.titleMedium)
+    EdgeToggle(stringResource(R.string.detect_auto), settings.autoDetect, onAutoDetect)
+
+    if (settings.autoDetect) {
+        Spacer(Modifier.height(8.dp))
+        Text(stringResource(R.string.detect_mode), style = MaterialTheme.typography.bodyLarge)
+        ModeOption(stringResource(R.string.mode_battery), settings.detectionMode == DetectionMode.BATTERY) {
+            onMode(DetectionMode.BATTERY)
+        }
+        ModeOption(stringResource(R.string.mode_balanced), settings.detectionMode == DetectionMode.BALANCED) {
+            onMode(DetectionMode.BALANCED)
+        }
+        ModeOption(stringResource(R.string.mode_extreme), settings.detectionMode == DetectionMode.EXTREME) {
+            onMode(DetectionMode.EXTREME)
+        }
+        EdgeToggle(stringResource(R.string.detect_boot), settings.autoStartOnBoot, onBoot)
+        Spacer(Modifier.height(8.dp))
+        Text(stringResource(R.string.detect_off_note), style = MaterialTheme.typography.bodySmall)
+        Text(stringResource(R.string.detect_powersave_note), style = MaterialTheme.typography.bodySmall)
+        if (settings.detectionMode != DetectionMode.BATTERY) {
+            Text(stringResource(R.string.detect_location_note), style = MaterialTheme.typography.bodySmall)
+        }
+    }
+}
+
+@Composable
+private fun ModeOption(label: String, selected: Boolean, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        RadioButton(selected = selected, onClick = onClick)
+        Text(label, style = MaterialTheme.typography.bodyLarge)
     }
 }
 

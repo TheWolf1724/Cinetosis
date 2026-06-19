@@ -8,6 +8,16 @@
     <!-- Servicio en primer plano para mantener overlay y sensores activos. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <!-- Servicio en primer plano de tipo ubicación (solo para los modos de detección con GPS). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+
+    <!-- Ubicación: SOLO para los modos de detección "Equilibrado" y "Máxima precisión" (GPS).
+         Se usa en el dispositivo (velocidad) y NUNCA se transmite. El modo por defecto no la usa. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Autoinicio de la detección al encender el teléfono. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <!-- Notificación del servicio en primer plano (Android 13+). -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -54,6 +64,27 @@
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="Overlay de indicadores de movimiento para reducir la cinetosis durante un trayecto." />
         </service>
+
+        <!-- Servicio de detección automática "voy en coche" (invisible, sin overlay). -->
+        <service
+            android:name=".service.DetectionService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse|location">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Detección de bajo consumo de si el usuario va en un vehículo para activar los indicadores de movimiento." />
+        </service>
+
+        <!-- Autoinicio: arranca la detección al encender el teléfono. -->
+        <receiver
+            android:name=".boot.BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <!-- Quick Settings Tile: acceso rápido desde la barra de notificaciones. -->
         <service

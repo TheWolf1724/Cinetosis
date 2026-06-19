@@ -7,11 +7,20 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "cinetosis_settings")
+
+/**
+ * Modo de detección automática de "voy en coche". Todos son **offline** (sin Google):
+ * - [BATTERY]:  movimiento significativo + acelerómetro. Consumo mínimo, precisión moderada.
+ * - [BALANCED]: añade GPS (LocationManager) para confirmar por velocidad. Más preciso, más batería.
+ * - [EXTREME]:  GPS + acelerómetro de forma más agresiva. Máxima precisión offline, más batería.
+ */
+enum class DetectionMode { BATTERY, BALANCED, EXTREME }
 
 /** Preferencias del usuario que afectan al aspecto y comportamiento de los indicadores. */
 data class Settings(
@@ -26,6 +35,9 @@ data class Settings(
     val edgeLeft: Boolean = true,
     val edgeRight: Boolean = true,
     val onboardingDone: Boolean = false,  // si el usuario ya completó el tour inicial
+    val autoDetect: Boolean = true,       // encender el overlay solo al detectar coche
+    val detectionMode: DetectionMode = DetectionMode.BATTERY,
+    val autoStartOnBoot: Boolean = true,  // iniciar la detección (invisible) al encender el móvil
 ) {
     companion object {
         const val DEFAULT_COLOR: Int = 0xCCFFFFFF.toInt() // blanco semitransparente
@@ -47,6 +59,9 @@ class SettingsRepository(private val context: Context) {
         val LEFT = booleanPreferencesKey("edge_left")
         val RIGHT = booleanPreferencesKey("edge_right")
         val ONBOARDING = booleanPreferencesKey("onboarding_done")
+        val AUTO_DETECT = booleanPreferencesKey("auto_detect")
+        val DETECTION_MODE = stringPreferencesKey("detection_mode")
+        val BOOT = booleanPreferencesKey("auto_start_boot")
     }
 
     private fun Preferences.toSettings(): Settings = Settings(
@@ -61,6 +76,10 @@ class SettingsRepository(private val context: Context) {
         edgeLeft = this[Keys.LEFT] ?: true,
         edgeRight = this[Keys.RIGHT] ?: true,
         onboardingDone = this[Keys.ONBOARDING] ?: false,
+        autoDetect = this[Keys.AUTO_DETECT] ?: true,
+        detectionMode = runCatching { DetectionMode.valueOf(this[Keys.DETECTION_MODE] ?: "") }
+            .getOrDefault(DetectionMode.BATTERY),
+        autoStartOnBoot = this[Keys.BOOT] ?: true,
     )
 
     val settings: Flow<Settings> = context.dataStore.data.map { it.toSettings() }
@@ -79,6 +98,9 @@ class SettingsRepository(private val context: Context) {
             prefs[Keys.LEFT] = updated.edgeLeft
             prefs[Keys.RIGHT] = updated.edgeRight
             prefs[Keys.ONBOARDING] = updated.onboardingDone
+            prefs[Keys.AUTO_DETECT] = updated.autoDetect
+            prefs[Keys.DETECTION_MODE] = updated.detectionMode.name
+            prefs[Keys.BOOT] = updated.autoStartOnBoot
         }
     }
 }

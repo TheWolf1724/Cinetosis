@@ -8,6 +8,13 @@ y el proyecto sigue el [Versionado Semántico](https://semver.org/lang/es/).
 ## [No publicado]
 
 ### Añadido
+- **Detección automática de "voy en coche"** (`DetectionService` + `VehicleClassifier`): enciende
+  los indicadores solo al detectar un vehículo (apagado manual). **Selector de 3 modos offline**:
+  *Batería* (movimiento significativo + acelerómetro, mínimo consumo, por defecto), *Equilibrado* y
+  *Máxima precisión* (con GPS de `LocationManager`, sin Google). Se **adapta al ahorro de batería**
+  del sistema (fuerza el modo Batería) y la lógica de clasificación es pura y testeada.
+- **Autoinicio al encender el teléfono** (`BootReceiver`): arranca la detección de forma invisible
+  (sin overlay) y solo lo enciende al detectar coche.
 - **Modo de prueba** en la pantalla principal (`MotionPreview`): vista previa con maniobras
   simuladas (acelerar, frenar, curvas) sobre fondo claro/oscuro, para ver y afinar el movimiento
   sin coche ni sensores.

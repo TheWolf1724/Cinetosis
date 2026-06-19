@@ -84,4 +84,18 @@
     <string name="demo_brake">Braking</string>
     <string name="demo_left">Turning left</string>
     <string name="demo_right">Turning right</string>
+
+    <!-- Automatic detection -->
+    <string name="section_detection">Automatic detection</string>
+    <string name="detect_auto">Turn on automatically when driving</string>
+    <string name="detect_mode">Detection mode</string>
+    <string name="mode_battery">Battery (recommended)</string>
+    <string name="mode_balanced">Balanced (GPS)</string>
+    <string name="mode_extreme">Maximum accuracy (GPS+)</string>
+    <string name="detect_boot">Start on phone boot</string>
+    <string name="detect_powersave_note">If you enable the system battery saver, Battery mode will be used automatically.</string>
+    <string name="detect_location_note">GPS modes request location permission. It is used only on the device (speed) and never transmitted.</string>
+    <string name="detect_off_note">Turning the cues off is always manual (from here or the quick tile).</string>
+    <string name="detect_notif_title">Cinetosis in background</string>
+    <string name="detect_notif_text">Low-power detection active.</string>
 </resources>

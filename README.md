@@ -50,6 +50,10 @@ reduciendo el conflicto sensorial y, con ello, el mareo.
   ningún servidor. Solo usa los sensores de movimiento del dispositivo. Ver
   [política de privacidad](PRIVACY.md).
 - 🌍 **Bilingüe (español / inglés)** con selector de idioma integrado en los ajustes.
+- 🚗 **Auto-encendido en coche (opcional):** detecta que vas en un vehículo y enciende los
+  indicadores solo. Tres modos **offline**: *Batería* (sin GPS, mínimo consumo), *Equilibrado* y
+  *Máxima precisión* (GPS). Se adapta al **ahorro de batería** del sistema y puede **arrancar al
+  encender el móvil** (de forma invisible hasta detectar coche). El apagado es manual.
 - 🆓 **Libre y gratuita** (MIT).
 
 ## Requisitos

@@ -84,4 +84,18 @@
     <string name="demo_brake">Frenando</string>
     <string name="demo_left">Curva a la izquierda</string>
     <string name="demo_right">Curva a la derecha</string>
+
+    <!-- Detección automática -->
+    <string name="section_detection">Detección automática</string>
+    <string name="detect_auto">Encender solo al detectar coche</string>
+    <string name="detect_mode">Modo de detección</string>
+    <string name="mode_battery">Batería (recomendado)</string>
+    <string name="mode_balanced">Equilibrado (GPS)</string>
+    <string name="mode_extreme">Máxima precisión (GPS+)</string>
+    <string name="detect_boot">Iniciar al encender el teléfono</string>
+    <string name="detect_powersave_note">Si activas el ahorro de batería del sistema, se usará el modo Batería automáticamente.</string>
+    <string name="detect_location_note">Los modos con GPS piden permiso de ubicación. Se usa solo en el dispositivo (velocidad) y nunca se transmite.</string>
+    <string name="detect_off_note">El apagado de los indicadores siempre es manual (desde aquí o el acceso rápido).</string>
+    <string name="detect_notif_title">Cinetosis en segundo plano</string>
+    <string name="detect_notif_text">Detección de bajo consumo activa.</string>
 </resources>

@@ -16,17 +16,27 @@
   idioma): se guardan **solo en tu dispositivo** mediante el almacenamiento local de Android
   (DataStore). Nunca se envían a ningún servidor.
 
+- **Ubicación (opcional, solo modos GPS):** si activas la detección automática en modo
+  «Equilibrado» o «Máxima precisión», la app usa la **velocidad del GPS** para reconocer que vas en
+  coche. Se procesa **en el dispositivo** y **nunca se transmite**. El modo por defecto («Batería»)
+  **no** usa la ubicación.
+
 ### Qué datos NO usa la app
 - ❌ No accede a Internet (la app no declara el permiso de red).
-- ❌ No recopila datos de identificación, ubicación, contactos, cámara ni micrófono.
-- ❌ No incluye analítica, publicidad ni rastreadores de terceros.
+- ❌ No recopila datos de identificación, contactos, cámara ni micrófono.
+- ❌ No usa la ubicación salvo en los modos de detección GPS, y siempre **en local**.
+- ❌ No incluye analítica, publicidad, Google Play Services ni rastreadores de terceros.
 - ❌ No comparte información con nadie.
 
 ### Permisos y su finalidad
 - **Mostrar sobre otras apps (`SYSTEM_ALERT_WINDOW`)**: dibujar los puntos por encima de otras
   aplicaciones.
-- **Servicio en primer plano (`FOREGROUND_SERVICE` / `..._SPECIAL_USE`)**: mantener activos el
-  overlay y los sensores durante el trayecto.
+- **Servicio en primer plano (`FOREGROUND_SERVICE` / `..._SPECIAL_USE` / `..._LOCATION`)**: mantener
+  activos el overlay/los sensores y la detección de "voy en coche".
+- **Ubicación (`ACCESS_FINE_LOCATION`, opcional)**: solo para los modos de detección con GPS; en
+  local, sin transmitir.
+- **Autoinicio (`RECEIVE_BOOT_COMPLETED`)**: arrancar la detección (invisible) al encender el móvil,
+  si lo activas.
 - **Notificaciones (`POST_NOTIFICATIONS`)**: mostrar la notificación obligatoria del servicio en
   primer plano.
 
@@ -52,17 +62,25 @@ Para cualquier duda, abre un *issue* en el repositorio de GitHub:
   on-screen motion cues. **They are not saved, not logged, and never leave your device.**
 - **App preferences** (sensitivity, dot count and size, active edges, language): stored **only on
   your device** using Android local storage (DataStore). They are never sent to any server.
+- **Location (optional, GPS modes only):** if you enable automatic detection in “Balanced” or
+  “Maximum accuracy” mode, the app uses **GPS speed** to recognize you are in a vehicle. It is
+  processed **on the device** and **never transmitted**. The default “Battery” mode does **not** use
+  location.
 
 ### Data the app does NOT use
 - ❌ No Internet access (the app does not declare the network permission).
-- ❌ No identifiers, location, contacts, camera, or microphone.
-- ❌ No analytics, ads, or third-party trackers.
+- ❌ No identifiers, contacts, camera, or microphone.
+- ❌ No location except in the GPS detection modes, always **on-device**.
+- ❌ No analytics, ads, Google Play Services, or third-party trackers.
 - ❌ No data shared with anyone.
 
 ### Permissions and their purpose
 - **Display over other apps (`SYSTEM_ALERT_WINDOW`)**: draw the dots on top of other apps.
-- **Foreground service (`FOREGROUND_SERVICE` / `..._SPECIAL_USE`)**: keep the overlay and sensors
-  running during a trip.
+- **Foreground service (`FOREGROUND_SERVICE` / `..._SPECIAL_USE` / `..._LOCATION`)**: keep the
+  overlay/sensors and the "in-vehicle" detection running.
+- **Location (`ACCESS_FINE_LOCATION`, optional)**: only for the GPS detection modes; on-device,
+  never transmitted.
+- **Autostart (`RECEIVE_BOOT_COMPLETED`)**: start the (invisible) detection on boot, if you enable it.
 - **Notifications (`POST_NOTIFICATIONS`)**: show the mandatory foreground-service notification.
 
 ### Children

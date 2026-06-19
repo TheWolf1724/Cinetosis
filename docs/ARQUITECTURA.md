@@ -80,6 +80,22 @@ Persistencia con **Jetpack DataStore (Preferences)**: sensibilidad, número de p
 color/tema, bordes activos y estado activado/desactivado. Expone `Flow`s que observan tanto la
 UI como el servicio.
 
+### `DetectionService` (`service/`) + `VehicleClassifier` (`detection/`)
+**Servicio en primer plano silencioso** que detecta de forma **offline** si el usuario va en coche
+y, en ese caso, **enciende `OverlayService` automáticamente** (el apagado es manual). Máquina de
+estados: `IDLE` → `CLASSIFYING` → `ACTIVE` → `COOLDOWN`.
+- En `IDLE` usa `TYPE_SIGNIFICANT_MOTION` (disparador por hardware, ~0 batería).
+- Al dispararse, muestrea el acelerómetro unos segundos y `VehicleClassifier` (lógica pura, con
+  tests) decide "coche vs andar/quieto". En modos GPS añade la velocidad de `LocationManager`.
+- **Tres modos** (`DetectionMode`): `BATTERY` (sensores), `BALANCED` y `EXTREME` (GPS). Si el
+  sistema entra en **ahorro de batería**, se fuerza `BATTERY`.
+- Tras encender el overlay pasa a `ACTIVE` (sensores apagados); si el usuario lo apaga, entra en
+  `COOLDOWN` para no reactivarlo al instante.
+
+### `BootReceiver` (`boot/`)
+Receptor de `BOOT_COMPLETED`: si el usuario lo activó, arranca `DetectionService` al encender el
+teléfono (solo modo sensores; los tipos de FGS con ubicación no pueden iniciarse desde el arranque).
+
 ### `MainActivity` + `ui/` (Compose)
 Pantalla de **ajustes e información**:
 - Explica la función y la ciencia (resumen).
@@ -92,10 +108,14 @@ Pantalla de **ajustes e información**:
 | Permiso | Motivo |
 |---------|--------|
 | `SYSTEM_ALERT_WINDOW` | Dibujar el overlay sobre otras apps. |
-| `FOREGROUND_SERVICE` + `FOREGROUND_SERVICE_SPECIAL_USE` | Servicio en primer plano para mantener el overlay y los sensores activos. |
+| `FOREGROUND_SERVICE` + `FOREGROUND_SERVICE_SPECIAL_USE` | Servicio en primer plano para overlay/sensores y detección. |
+| `FOREGROUND_SERVICE_LOCATION` | FGS de tipo ubicación, solo en los modos de detección con GPS. |
+| `ACCESS_FINE_LOCATION` (opcional) | Velocidad GPS para los modos de detección con GPS. En local, sin transmitir. |
+| `RECEIVE_BOOT_COMPLETED` | Autoinicio de la detección al encender el móvil (si se activa). |
 | `POST_NOTIFICATIONS` | Notificación del servicio en primer plano (Android 13+). |
 
-**No** se declara permiso de Internet: la app es completamente offline.
+**No** se declara permiso de Internet: la app es completamente offline (incluida la detección, que
+**no** usa Google Play Services).
 
 ## Decisiones de diseño
 
@@ -107,6 +127,6 @@ Pantalla de **ajustes e información**:
 
 ## Hoja de ruta (futuro)
 
-- Perfiles automáticos (detección de «en vehículo» por patrón de aceleración).
+- Mejorar el clasificador de "en vehículo" (más características, distinguir tren/bici).
 - Calibración guiada de sensibilidad.
 - Selector de color manual de los puntos en la UI.
