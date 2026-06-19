@@ -32,6 +32,12 @@ y el proyecto sigue el [Versionado Semántico](https://semver.org/lang/es/).
   puntos de movimiento en los bordes y variante monocroma para iconos temáticos.
 
 ### Cambiado
+- **Compensación de orientación con el vector de rotación** (`TYPE_GAME_ROTATION_VECTOR`, con
+  fallback a `TYPE_ROTATION_VECTOR`): `MotionEngine` proyecta la aceleración horizontal real sobre
+  los ejes de la pantalla teniendo en cuenta la inclinación del teléfono y la rotación del display,
+  así acelerar/frenar/curvas se mapean bien se sujete como se sujete. Lógica pura en
+  `MotionMath.screenComponents`, con tests. (Sustituye al heurístico anterior basado en el
+  giroscopio.)
 - `MotionEngine` ahora reutiliza `MotionMath` (filtro paso-bajo y mapeo de ejes), eliminando la
   duplicación y haciendo la lógica testeable.
 - Sincronizado el proyecto con Android Studio: wrapper a **Gradle 9.4.1**, catálogo de versiones

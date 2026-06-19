@@ -5,23 +5,34 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.hardware.display.DisplayManager
+import android.view.Display
+import android.view.Surface
 
 /**
- * Motor de movimiento. Se suscribe al acelerómetro lineal y al giroscopio, filtra la señal y
- * produce un vector 2D normalizado (~[-1, 1]) que indica hacia dónde deben desplazarse los puntos.
+ * Motor de movimiento. Combina el acelerómetro lineal con el vector de rotación para proyectar la
+ * aceleración real del vehículo sobre los ejes de la **pantalla**, de forma independiente a cómo se
+ * sostenga el teléfono. Produce un vector 2D normalizado (~[-1, 1]) que indica hacia dónde deben
+ * desplazarse los puntos (en el sentido de la fuerza inercial que siente el cuerpo).
  *
- * Mapeo (teléfono en vertical):
- *  - [motionX]: lateral (curvas).            Positivo = derecha.
- *  - [motionY]: longitudinal (acelerar/frenar). Invertido: al acelerar, los puntos van hacia atrás.
+ * Convención (coincide con docs/CIENCIA.md):
+ *  - Acelerar → puntos hacia atrás (abajo);  frenar → hacia delante (arriba).
+ *  - Curva a la derecha → puntos a la izquierda;  curva a la izquierda → a la derecha.
  *
- * Nota: una compensación completa de la orientación con TYPE_ROTATION_VECTOR es trabajo futuro
- * (ver docs/ARQUITECTURA.md).
+ * Si no hay sensor de rotación, cae a un modo simple en coordenadas del dispositivo.
  */
 class MotionEngine(context: Context) : SensorEventListener {
 
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private val linearAccel: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
-    private val gyroscope: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
+    // GAME_ROTATION_VECTOR no usa magnetómetro (mejor en coches, sin interferencias); si no está,
+    // se usa ROTATION_VECTOR. Solo necesitamos la referencia de "arriba" (gravedad), no el norte.
+    private val rotationSensor: Sensor? =
+        sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR)
+            ?: sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
+
+    private val displayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+    private val display: Display? get() = displayManager.getDisplay(Display.DEFAULT_DISPLAY)
 
     @Volatile
     var motionX: Float = 0f
@@ -41,7 +52,10 @@ class MotionEngine(context: Context) : SensorEventListener {
 
     private var filtX = 0f
     private var filtY = 0f
-    private var gyroZ = 0f
+    private var filtZ = 0f
+
+    private val rotationMatrix = FloatArray(9)
+    private var hasRotation = false
 
     private val alpha = 0.15f      // suavizado del filtro paso-bajo (menor = más suave)
     private val maxAccel = 6f      // m/s^2 que se mapean al máximo desplazamiento (1.0)
@@ -51,7 +65,7 @@ class MotionEngine(context: Context) : SensorEventListener {
 
     fun start() {
         linearAccel?.let { sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_GAME) }
-        gyroscope?.let { sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_GAME) }
+        rotationSensor?.let { sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_GAME) }
     }
 
     fun stop() {
@@ -60,7 +74,8 @@ class MotionEngine(context: Context) : SensorEventListener {
         motionY = 0f
         filtX = 0f
         filtY = 0f
-        gyroZ = 0f
+        filtZ = 0f
+        hasRotation = false
     }
 
     override fun onSensorChanged(event: SensorEvent) {
@@ -68,17 +83,49 @@ class MotionEngine(context: Context) : SensorEventListener {
             Sensor.TYPE_LINEAR_ACCELERATION -> {
                 filtX = MotionMath.lowPass(filtX, event.values[0], alpha)
                 filtY = MotionMath.lowPass(filtY, event.values[1], alpha)
+                filtZ = MotionMath.lowPass(filtZ, event.values[2], alpha)
+                computeMotion()
             }
-            Sensor.TYPE_GYROSCOPE -> {
-                // Velocidad angular alrededor del eje vertical del teléfono (viraje del vehículo).
-                gyroZ = MotionMath.lowPass(gyroZ, event.values[2], alpha)
+            Sensor.TYPE_GAME_ROTATION_VECTOR, Sensor.TYPE_ROTATION_VECTOR -> {
+                SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values)
+                hasRotation = true
             }
-            else -> return
+            else -> Unit
         }
+    }
 
-        val lateral = filtX + gyroZ * 1.5f
-        motionX = MotionMath.mapAxis(lateral, deadZone, maxAccel, sensitivity)
-        motionY = -MotionMath.mapAxis(filtY, deadZone, maxAccel, sensitivity)
+    private fun computeMotion() {
+        val screenX: Float
+        val screenY: Float
+        if (hasRotation) {
+            val (right, up) = screenAxesForRotation(display?.rotation ?: Surface.ROTATION_0)
+            val (sx, sy) = MotionMath.screenComponents(
+                filtX, filtY, filtZ,
+                rotationMatrix,
+                right[0], right[1], right[2],
+                up[0], up[1], up[2],
+            )
+            screenX = sx
+            screenY = sy
+        } else {
+            // Fallback sin sensor de rotación: ejes del dispositivo (válido con el móvil plano).
+            screenX = filtX
+            screenY = filtY
+        }
+        // Los puntos se mueven en sentido contrario a la aceleración (fuerza inercial sentida).
+        motionX = MotionMath.mapAxis(-screenX, deadZone, maxAccel, sensitivity)
+        motionY = MotionMath.mapAxis(screenY, deadZone, maxAccel, sensitivity)
+    }
+
+    /**
+     * Ejes "derecha" y "arriba" de la pantalla expresados en coordenadas del dispositivo, según la
+     * rotación del display (para que el mapeo sea correcto en vertical y en horizontal).
+     */
+    private fun screenAxesForRotation(rotation: Int): Pair<FloatArray, FloatArray> = when (rotation) {
+        Surface.ROTATION_90 -> floatArrayOf(0f, 1f, 0f) to floatArrayOf(-1f, 0f, 0f)
+        Surface.ROTATION_180 -> floatArrayOf(-1f, 0f, 0f) to floatArrayOf(0f, -1f, 0f)
+        Surface.ROTATION_270 -> floatArrayOf(0f, -1f, 0f) to floatArrayOf(1f, 0f, 0f)
+        else -> floatArrayOf(1f, 0f, 0f) to floatArrayOf(0f, 1f, 0f)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) { /* no-op */ }

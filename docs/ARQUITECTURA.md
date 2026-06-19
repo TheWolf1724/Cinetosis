@@ -38,14 +38,20 @@ Núcleo de procesamiento. Se suscribe a `SensorManager`:
 
 Procesado de la señal:
 1. **Filtro paso-bajo** (suavizado exponencial) para quitar vibración de alta frecuencia.
-2. **Zona muerta** configurable para ignorar microaceleraciones.
-3. **Escalado por sensibilidad** (ajuste del usuario).
-4. Salida: un **vector 2D normalizado** `(x, y)` que representa hacia dónde deben desplazarse los
-   puntos, emitido como `StateFlow` para que la vista lo consuma.
+2. **Compensación de orientación con `RotationVector`** (ver abajo).
+3. **Zona muerta** configurable para ignorar microaceleraciones.
+4. **Escalado por sensibilidad** (ajuste del usuario).
+5. Salida: un **vector 2D normalizado** `(x, y)` que representa hacia dónde deben desplazarse los
+   puntos (en el sentido de la fuerza inercial sentida).
 
-> Nota de orientación: el mapeo sensor→pantalla tiene en cuenta la orientación del dispositivo
-> (vertical/horizontal). Una mejora futura es usar el `RotationVector` para compensar la
-> inclinación al sostener el teléfono.
+> **Compensación de orientación.** Se usa `TYPE_GAME_ROTATION_VECTOR` (sin magnetómetro, mejor en
+> coches; con fallback a `TYPE_ROTATION_VECTOR`) para obtener la matriz de rotación device→world.
+> Con ella se transforma la aceleración lineal al mundo, se toma su componente **horizontal** y se
+> proyecta sobre los ejes de la **pantalla** (también proyectados al plano horizontal), teniendo en
+> cuenta además la rotación del display. Así el mapeo acelerar/frenar/curvas es correcto sea cual sea
+> la inclinación con que se sujete el teléfono. (Con el móvil casi vertical, el eje longitudinal de
+> pantalla se vuelve casi vertical y su señal tiende a 0: limitación física inevitable.) La función
+> de proyección vive en `MotionMath.screenComponents` y está cubierta por tests.
 
 ### `OverlayService` (`service/`)
 **Foreground Service** (con notificación persistente, obligatoria en Android 8+). Responsable de:
@@ -101,7 +107,6 @@ Pantalla de **ajustes e información**:
 
 ## Hoja de ruta (futuro)
 
-- Compensación de inclinación con `RotationVector`.
 - Perfiles automáticos (detección de «en vehículo» por patrón de aceleración).
-- Modo nocturno/diurno automático para el color de los puntos.
 - Calibración guiada de sensibilidad.
+- Selector de color manual de los puntos en la UI.

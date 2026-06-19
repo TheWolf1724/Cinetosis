@@ -50,4 +50,37 @@ class MotionMathTest {
         // alpha 0 no cambia el valor previo.
         assertEquals(3f, MotionMath.lowPass(3f, 99f, 0f), 1e-4f)
     }
+
+    @Test
+    fun `con rotacion identidad las componentes de pantalla igualan x e y del dispositivo`() {
+        // R = identidad (móvil plano, alineado con el mundo). z (vertical) se ignora.
+        val r = floatArrayOf(1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f)
+        val (sx, sy) = MotionMath.screenComponents(
+            ax = 2f, ay = 3f, az = 9f,
+            r = r,
+            rightDx = 1f, rightDy = 0f, rightDz = 0f,
+            upDx = 0f, upDy = 1f, upDz = 0f,
+        )
+        assertEquals(2f, sx, 1e-4f)
+        assertEquals(3f, sy, 1e-4f)
+    }
+
+    @Test
+    fun `con el movil casi vertical la componente longitudinal de pantalla tiende a cero`() {
+        // Rotación que lleva el eje Y del dispositivo a la vertical del mundo (móvil en vertical):
+        // columnas = imágenes de los ejes del dispositivo -> X->(1,0,0), Y->(0,0,1), Z->(0,-1,0)
+        val r = floatArrayOf(
+            1f, 0f, 0f,
+            0f, 0f, -1f,
+            0f, 1f, 0f,
+        )
+        // Aceleración a lo largo del eje Y del dispositivo (vertical cuando el móvil está de pie).
+        val (_, sy) = MotionMath.screenComponents(
+            ax = 0f, ay = 5f, az = 0f,
+            r = r,
+            rightDx = 1f, rightDy = 0f, rightDz = 0f,
+            upDx = 0f, upDy = 1f, upDz = 0f,
+        )
+        assertEquals(0f, sy, 1e-4f)
+    }
 }
