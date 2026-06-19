@@ -22,8 +22,10 @@
 
     <string name="section_appearance">Appearance</string>
     <string name="sensitivity">Sensitivity</string>
+    <string name="amplitude">Movement range</string>
     <string name="dots_per_edge">Dots per edge</string>
     <string name="dot_size">Dot size</string>
+    <string name="adaptive_color">Automatic color (light/dark)</string>
 
     <string name="section_edges">Active edges</string>
     <string name="edge_top">Top edge</string>
@@ -71,4 +73,15 @@
     <string name="main_tile_hint">Tip: add the Cinetosis quick tile to your Quick Settings to toggle it from anywhere.</string>
     <string name="main_add_tile">Add quick tile</string>
     <string name="content_desc_logo">Cinetosis logo</string>
+
+    <!-- Test / demo mode -->
+    <string name="section_test">Test the movement</string>
+    <string name="demo_hint">Preview with simulated maneuvers over a light and dark background. The dots have an outline so they show on any background. Adjust range and size while watching.</string>
+    <string name="demo_play">Play</string>
+    <string name="demo_pause">Pause</string>
+    <string name="demo_idle">Idle</string>
+    <string name="demo_accel">Accelerating</string>
+    <string name="demo_brake">Braking</string>
+    <string name="demo_left">Turning left</string>
+    <string name="demo_right">Turning right</string>
 </resources>

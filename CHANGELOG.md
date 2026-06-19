@@ -8,6 +8,11 @@ y el proyecto sigue el [Versionado Semántico](https://semver.org/lang/es/).
 ## [No publicado]
 
 ### Añadido
+- **Modo de prueba** en la pantalla principal (`MotionPreview`): vista previa con maniobras
+  simuladas (acelerar, frenar, curvas) sobre fondo claro/oscuro, para ver y afinar el movimiento
+  sin coche ni sensores.
+- Ajuste de **amplitud del movimiento** (recorrido de los puntos) con slider, y conmutador de
+  **color automático** claro/oscuro.
 - **Tour de bienvenida en primera ejecución** (`OnboardingScreen`) con `HorizontalPager`:
   explicación breve → una página por permiso (overlay y notificaciones) con botón directo para
   concederlo → página para añadir el acceso rápido → página final de bienvenida. El estado se
@@ -38,6 +43,10 @@ y el proyecto sigue el [Versionado Semántico](https://semver.org/lang/es/).
   está activo, pero ahora es prácticamente invisible.
 
 ### Corregido
+- Los puntos ahora tienen **mayor recorrido** (configurable) y un **contorno/halo** contrastado
+  para verse sobre cualquier fondo (un overlay no puede leer los píxeles del fondo real).
+- Los puntos respetan los **insets de las barras del sistema**, de modo que la barra de estado o de
+  navegación ya no los oculta.
 - El **acceso rápido (tile)** ahora refleja correctamente su estado al pulsarlo: antes se quedaba
   encendido visualmente porque se leía el flag `isRunning` del servicio (asíncrono) demasiado
   pronto. Se actualiza de inmediato y el servicio refresca el tile (`requestListeningState`) al

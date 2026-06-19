@@ -138,6 +138,12 @@ fun MainScreen() {
                 onChange = { v -> scope.launch { repository.update { it.copy(sensitivity = v) } } },
             )
             LabeledSlider(
+                label = stringResource(R.string.amplitude) + ": ${(settings.amplitude * 100).roundToInt()}%",
+                value = settings.amplitude,
+                range = 0f..1f,
+                onChange = { v -> scope.launch { repository.update { it.copy(amplitude = v) } } },
+            )
+            LabeledSlider(
                 label = stringResource(R.string.dots_per_edge) + ": ${settings.dotsPerEdge}",
                 value = settings.dotsPerEdge.toFloat(),
                 range = 2f..12f,
@@ -149,6 +155,16 @@ fun MainScreen() {
                 range = 2f..12f,
                 onChange = { v -> scope.launch { repository.update { it.copy(dotSizeDp = v) } } },
             )
+            EdgeToggle(stringResource(R.string.adaptive_color), settings.adaptiveColor) { c ->
+                scope.launch { repository.update { it.copy(adaptiveColor = c) } }
+            }
+
+            Spacer(Modifier.height(16.dp))
+            Text(stringResource(R.string.section_test), style = MaterialTheme.typography.titleMedium)
+            Spacer(Modifier.height(4.dp))
+            Text(stringResource(R.string.demo_hint), style = MaterialTheme.typography.bodySmall)
+            Spacer(Modifier.height(8.dp))
+            MotionPreview(settings)
 
             Spacer(Modifier.height(16.dp))
             Text(stringResource(R.string.section_edges), style = MaterialTheme.typography.titleMedium)

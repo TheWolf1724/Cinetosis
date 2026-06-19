@@ -6,12 +6,16 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.content.res.Configuration
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
 import android.service.quicksettings.TileService
 import android.view.WindowManager
 import androidx.core.app.NotificationCompat
+import androidx.core.graphics.ColorUtils
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.thewolf1724.cinetosis.CinetosisApp
 import com.thewolf1724.cinetosis.MainActivity
 import com.thewolf1724.cinetosis.R
@@ -83,15 +87,26 @@ class OverlayService : Service() {
             PixelFormat.TRANSLUCENT,
         )
         windowManager.addView(view, params)
+        // Ajusta los puntos a la zona visible (fuera de la barra de estado/navegación).
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setInsets(bars.left, bars.top, bars.right, bars.bottom)
+            insets
+        }
+        ViewCompat.requestApplyInsets(view)
         dotsView = view
     }
 
     private fun observeSettings() {
         repository.settings.onEach { s ->
             motionEngine.sensitivity = s.sensitivity
+            val density = resources.displayMetrics.density
+            val night = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+                Configuration.UI_MODE_NIGHT_YES
             dotsView?.apply {
-                dotColor = s.colorArgb
-                dotRadiusPx = s.dotSizeDp * resources.displayMetrics.density
+                maxShiftPx = (MIN_SHIFT_DP + s.amplitude * (MAX_SHIFT_DP - MIN_SHIFT_DP)) * density
+                applyColors(this, s.adaptiveColor, s.colorArgb, night)
+                dotRadiusPx = s.dotSizeDp * density
                 dotsPerEdge = s.dotsPerEdge
                 edgeTop = s.edgeTop
                 edgeBottom = s.edgeBottom
@@ -99,6 +114,21 @@ class OverlayService : Service() {
                 edgeRight = s.edgeRight
             }
         }.launchIn(scope)
+    }
+
+    private fun applyColors(view: DotsView, adaptive: Boolean, colorArgb: Int, night: Boolean) {
+        if (adaptive) {
+            // Color base según el tema del sistema; el halo da contraste sobre cualquier fondo.
+            view.dotColor = if (night) 0xF2FFFFFF.toInt() else 0xF21A1A1A.toInt()
+            view.haloColor = if (night) 0x80000000.toInt() else 0x80FFFFFF.toInt()
+        } else {
+            view.dotColor = colorArgb
+            view.haloColor = if (ColorUtils.calculateLuminance(colorArgb) > 0.5) {
+                0x80000000.toInt()
+            } else {
+                0x80FFFFFF.toInt()
+            }
+        }
     }
 
     private fun startForegroundCompat() {
@@ -144,6 +174,10 @@ class OverlayService : Service() {
         const val ACTION_START = "com.thewolf1724.cinetosis.action.START"
         const val ACTION_STOP = "com.thewolf1724.cinetosis.action.STOP"
         private const val NOTIFICATION_ID = 1001
+
+        // Rango del recorrido de los puntos (en dp) mapeado desde el ajuste de amplitud (0..1).
+        const val MIN_SHIFT_DP = 16f
+        const val MAX_SHIFT_DP = 70f
 
         /** Estado observable por la UI y el Tile. */
         @Volatile

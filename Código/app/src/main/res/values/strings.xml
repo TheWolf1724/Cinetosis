@@ -22,8 +22,10 @@
 
     <string name="section_appearance">Aspecto</string>
     <string name="sensitivity">Sensibilidad</string>
+    <string name="amplitude">Amplitud del movimiento</string>
     <string name="dots_per_edge">Puntos por borde</string>
     <string name="dot_size">Tamaño del punto</string>
+    <string name="adaptive_color">Color automático (claro/oscuro)</string>
 
     <string name="section_edges">Bordes activos</string>
     <string name="edge_top">Borde superior</string>
@@ -71,4 +73,15 @@
     <string name="main_tile_hint">Consejo: añade el acceso rápido de Cinetosis a tus Ajustes rápidos para activarlo desde cualquier sitio.</string>
     <string name="main_add_tile">Añadir acceso rápido</string>
     <string name="content_desc_logo">Logotipo de Cinetosis</string>
+
+    <!-- Modo de prueba / demo -->
+    <string name="section_test">Probar el movimiento</string>
+    <string name="demo_hint">Vista previa con maniobras simuladas sobre fondo claro y oscuro. Los puntos llevan un contorno para verse sobre cualquier fondo. Ajusta la amplitud y el tamaño mientras miras.</string>
+    <string name="demo_play">Reproducir</string>
+    <string name="demo_pause">Pausar</string>
+    <string name="demo_idle">En reposo</string>
+    <string name="demo_accel">Acelerando</string>
+    <string name="demo_brake">Frenando</string>
+    <string name="demo_left">Curva a la izquierda</string>
+    <string name="demo_right">Curva a la derecha</string>
 </resources>
