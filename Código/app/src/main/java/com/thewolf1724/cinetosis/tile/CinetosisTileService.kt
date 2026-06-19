@@ -26,12 +26,11 @@ class CinetosisTileService : TileService() {
             openAppForPermission()
             return
         }
-        if (OverlayService.isRunning) {
-            OverlayService.stop(this)
-        } else {
-            OverlayService.start(this)
-        }
-        updateTile()
+        val turnOn = !OverlayService.isRunning
+        if (turnOn) OverlayService.start(this) else OverlayService.stop(this)
+        // Actualización visual inmediata: el flag isRunning del servicio se actualiza de forma
+        // asíncrona, así que reflejamos directamente la acción que acabamos de ordenar.
+        setTileState(turnOn)
     }
 
     private fun openAppForPermission() {
@@ -52,13 +51,15 @@ class CinetosisTileService : TileService() {
         }
     }
 
-    private fun updateTile() {
+    /** Sincroniza el tile con el estado real del servicio (al abrir la bandeja de Ajustes rápidos). */
+    private fun updateTile() = setTileState(OverlayService.isRunning)
+
+    private fun setTileState(active: Boolean) {
         val tile = qsTile ?: return
-        val running = OverlayService.isRunning
-        tile.state = if (running) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
+        tile.state = if (active) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
         tile.label = getString(R.string.tile_label)
         tile.contentDescription = getString(
-            if (running) R.string.tile_state_on else R.string.tile_state_off,
+            if (active) R.string.tile_state_on else R.string.tile_state_off,
         )
         tile.updateTile()
     }

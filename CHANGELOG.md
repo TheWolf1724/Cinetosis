@@ -33,6 +33,15 @@ y el proyecto sigue el [Versionado Semántico](https://semver.org/lang/es/).
   ampliado (Material, AndroidX Test) y `testInstrumentationRunner` configurado.
 - El icono usa solo el formato adaptativo vectorial (eliminados los `webp` por densidad y el tema
   noche autogenerado, redundante con `Theme.AppCompat.DayNight`).
+- La notificación del servicio en primer plano pasa a un canal **IMPORTANCE_MIN** (silenciosa, sin
+  icono en la barra de estado y minimizada). Android exige una notificación mientras el servicio
+  está activo, pero ahora es prácticamente invisible.
+
+### Corregido
+- El **acceso rápido (tile)** ahora refleja correctamente su estado al pulsarlo: antes se quedaba
+  encendido visualmente porque se leía el flag `isRunning` del servicio (asíncrono) demasiado
+  pronto. Se actualiza de inmediato y el servicio refresca el tile (`requestListeningState`) al
+  cambiar de estado, manteniéndolo sincronizado también cuando se activa desde la app.
 
 ## [0.1.0] - 2026-06-19
 

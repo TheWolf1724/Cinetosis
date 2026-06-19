@@ -2,12 +2,14 @@ package com.thewolf1724.cinetosis.service
 
 import android.app.PendingIntent
 import android.app.Service
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
+import android.service.quicksettings.TileService
 import android.view.WindowManager
 import androidx.core.app.NotificationCompat
 import com.thewolf1724.cinetosis.CinetosisApp
@@ -16,6 +18,7 @@ import com.thewolf1724.cinetosis.R
 import com.thewolf1724.cinetosis.data.SettingsRepository
 import com.thewolf1724.cinetosis.motion.MotionEngine
 import com.thewolf1724.cinetosis.overlay.DotsView
+import com.thewolf1724.cinetosis.tile.CinetosisTileService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -54,7 +57,16 @@ class OverlayService : Service() {
         observeSettings()
         motionEngine.start()
         isRunning = true
+        refreshTile()
         return START_STICKY
+    }
+
+    /** Pide al sistema refrescar el Quick Settings Tile para que refleje el estado real. */
+    private fun refreshTile() {
+        TileService.requestListeningState(
+            this,
+            ComponentName(this, CinetosisTileService::class.java),
+        )
     }
 
     private fun addOverlay() {
@@ -102,7 +114,9 @@ class OverlayService : Service() {
             .setSmallIcon(R.drawable.ic_tile)
             .setContentIntent(openApp)
             .setOngoing(true)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setSilent(true)
+            .setPriority(NotificationCompat.PRIORITY_MIN)
+            .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_DEFERRED)
             .build()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
@@ -122,6 +136,7 @@ class OverlayService : Service() {
         dotsView = null
         scope.cancel()
         isRunning = false
+        refreshTile()
         super.onDestroy()
     }
 
