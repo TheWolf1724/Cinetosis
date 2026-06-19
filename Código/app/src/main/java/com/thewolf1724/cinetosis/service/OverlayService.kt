@@ -11,6 +11,7 @@ import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
 import android.service.quicksettings.TileService
+import android.view.Gravity
 import android.view.WindowManager
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.ColorUtils
@@ -79,13 +80,25 @@ class OverlayService : Service() {
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT,
+            // Máxima capa disponible para una app de terceros (por debajo de las barras del
+            // sistema y del panel de notificaciones, que son inalcanzables sin firma de sistema).
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
                 WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
+                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
             PixelFormat.TRANSLUCENT,
         )
+        params.gravity = Gravity.TOP or Gravity.START
+        // Cubrir también la zona del notch/cutout (edge-to-edge).
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            params.layoutInDisplayCutoutMode =
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            params.layoutInDisplayCutoutMode =
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+        }
         windowManager.addView(view, params)
         // Ajusta los puntos a la zona visible (fuera de la barra de estado/navegación).
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->

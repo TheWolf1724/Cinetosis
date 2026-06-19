@@ -59,7 +59,9 @@ class DotsView(
 
     fun setInsets(left: Int, top: Int, right: Int, bottom: Int) {
         insetLeft = left.toFloat()
-        insetTop = top.toFloat()
+        // En overlays el sistema a veces reporta inset superior = 0; aseguramos al menos la altura
+        // de la barra de estado para que los puntos de arriba nunca queden ocultos tras ella.
+        insetTop = maxOf(top.toFloat(), defaultStatusBarHeight())
         insetRight = right.toFloat()
         insetBottom = bottom.toFloat()
         invalidate()

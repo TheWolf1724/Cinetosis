@@ -39,6 +39,12 @@ y el proyecto sigue el [Versionado Semántico](https://semver.org/lang/es/).
   puntos de movimiento en los bordes y variante monocroma para iconos temáticos.
 
 ### Cambiado
+- **Overlay a la máxima capa posible y edge-to-edge:** el overlay usa `TYPE_APPLICATION_OVERLAY`
+  (la capa más alta disponible para una app de terceros), con aceleración por hardware y cobertura
+  de la zona del notch/cutout. Se blinda el cálculo de *insets* para que el borde superior nunca
+  quede oculto tras la barra de estado (en overlays el sistema a veces reporta inset 0).
+  Nota: por seguridad de Android, ninguna app de terceros puede dibujar por encima de la barra de
+  estado/navegación ni del panel de notificaciones (eso solo lo pueden las apps de sistema).
 - **Compensación de orientación con el vector de rotación** (`TYPE_GAME_ROTATION_VECTOR`, con
   fallback a `TYPE_ROTATION_VECTOR`): `MotionEngine` proyecta la aceleración horizontal real sobre
   los ejes de la pantalla teniendo en cuenta la inclinación del teléfono y la rotación del display,
