@@ -1,0 +1,94 @@
+# ==========================================================================
+#  Cinetosis — .gitignore maestro
+#  Cubre el repositorio completo, incluyendo el proyecto Android en Código/
+# ==========================================================================
+
+# --------------------------------------------------------------------------
+#  Android / Gradle  (el proyecto vive en Código/)
+# --------------------------------------------------------------------------
+# Carpetas de build (en cualquier nivel de profundidad)
+**/build/
+**/.gradle/
+**/.cxx/
+**/captures/
+
+# Configuración local de la máquina (NUNCA debe subirse: rutas del SDK, etc.)
+**/local.properties
+
+# Keystores y secretos de firma (NUNCA subir a un repo público)
+*.jks
+*.keystore
+**/keystore.properties
+**/signing.properties
+*.p12
+*.pem
+release/
+
+# Artefactos compilados
+*.apk
+*.aab
+*.aar
+*.ap_
+*.dex
+*.class
+
+# Logs y caches de herramientas
+*.log
+**/.kotlin/
+**/lint/
+
+# --------------------------------------------------------------------------
+#  Android Studio / IntelliJ IDEA (.idea)
+#  Se ignora la configuración local del IDE; lo compartible va versionado.
+# --------------------------------------------------------------------------
+**/.idea/*
+# Excepciones útiles que sí conviene compartir (descomenta si las quieres versionar):
+!**/.idea/codeStyles/
+!**/.idea/inspectionProfiles/
+# Caches y estado por usuario del IDE
+**/.idea/caches/
+**/.idea/libraries/
+**/.idea/modules.xml
+**/.idea/workspace.xml
+**/.idea/tasks.xml
+**/.idea/usage.statistics.xml
+**/.idea/dictionaries/
+**/.idea/shelf/
+**/.idea/navEditor.xml
+**/.idea/assetWizardSettings.xml
+**/.idea/deploymentTargetDropDown.xml
+**/.idea/deploymentTargetSelector.xml
+**/.idea/gradle.xml
+**/.idea/jarRepositories.xml
+**/.idea/misc.xml
+**/.idea/compiler.xml
+**/.idea/*.iml
+**/*.iml
+
+# --------------------------------------------------------------------------
+#  Sistema operativo
+# --------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+*~
+.directory
+
+# --------------------------------------------------------------------------
+#  Editores varios
+# --------------------------------------------------------------------------
+.vscode/
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# --------------------------------------------------------------------------
+#  Node / herramientas auxiliares (por si se añaden scripts en el futuro)
+# --------------------------------------------------------------------------
+node_modules/

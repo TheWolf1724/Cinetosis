@@ -1,0 +1,7 @@
+# Plantilla. Copia este archivo a "local.properties" y ajusta la ruta a tu SDK de Android.
+# local.properties NO debe subirse al repositorio (contiene rutas de tu máquina).
+#
+# Linux:   sdk.dir=/home/USUARIO/Android/Sdk
+# macOS:   sdk.dir=/Users/USUARIO/Library/Android/sdk
+# Windows: sdk.dir=C\:\\Users\\USUARIO\\AppData\\Local\\Android\\Sdk
+sdk.dir=/ruta/a/tu/Android/Sdk

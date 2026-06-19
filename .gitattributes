@@ -1,0 +1,25 @@
+# Normaliza finales de línea automáticamente
+* text=auto eol=lf
+
+# Scripts específicos de plataforma
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
+gradlew         text eol=lf
+
+# Tratar como binarios (sin diffs ni normalización de EOL)
+*.jar           binary
+*.png           binary
+*.jpg           binary
+*.jpeg          binary
+*.gif           binary
+*.webp          binary
+*.ico           binary
+*.keystore      binary
+*.jks           binary
+*.apk           binary
+*.aab           binary
+
+# Estadísticas de lenguaje de GitHub (linguist)
+Código/**       linguist-detectable=true
+docs/**         linguist-documentation
+*.md            linguist-documentation

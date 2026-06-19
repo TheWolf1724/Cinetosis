@@ -1,0 +1,11 @@
+# .gitignore específico del proyecto Android (complementa al .gitignore raíz).
+*.iml
+.gradle/
+build/
+.cxx/
+local.properties
+.idea/
+captures/
+*.apk
+*.aab
+.kotlin/

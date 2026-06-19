@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema base de la app. La UI real se pinta con Jetpack Compose; este tema solo
+         define el arranque (splash/ventana) con Material 3. -->
+    <style name="Theme.Cinetosis" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cinetosis</string>
+
+    <!-- Quick Settings Tile -->
+    <string name="tile_label">Cinetosis</string>
+    <string name="tile_state_on">Indicadores activos</string>
+    <string name="tile_state_off">Indicadores desactivados</string>
+
+    <!-- Notificación del servicio en primer plano -->
+    <string name="notif_channel_name">Indicadores de movimiento</string>
+    <string name="notif_channel_desc">Notificación del servicio que muestra los puntos de movimiento.</string>
+    <string name="notif_title">Cinetosis activo</string>
+    <string name="notif_text">Mostrando indicadores de movimiento para reducir el mareo.</string>
+
+    <!-- Pantalla principal -->
+    <string name="intro_text">Cinetosis dibuja puntos en los bordes de la pantalla que se mueven con las aceleraciones del coche. Así lo que ves coincide con lo que siente tu cuerpo y se reduce el mareo.</string>
+    <string name="permission_needed">Para mostrar los puntos sobre otras apps (mapas, libros, etc.) necesitas conceder el permiso «Mostrar sobre otras aplicaciones».</string>
+    <string name="grant_permission">Conceder permiso</string>
+    <string name="start_overlay">Activar indicadores</string>
+    <string name="stop_overlay">Desactivar indicadores</string>
+
+    <string name="section_appearance">Aspecto</string>
+    <string name="sensitivity">Sensibilidad</string>
+    <string name="dots_per_edge">Puntos por borde</string>
+    <string name="dot_size">Tamaño del punto</string>
+
+    <string name="section_edges">Bordes activos</string>
+    <string name="edge_top">Borde superior</string>
+    <string name="edge_bottom">Borde inferior</string>
+    <string name="edge_left">Borde izquierdo</string>
+    <string name="edge_right">Borde derecho</string>
+
+    <string name="disclaimer">Cinetosis es una ayuda, no un dispositivo médico. No la uses mientras conduces.</string>
+</resources>
