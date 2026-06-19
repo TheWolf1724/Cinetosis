@@ -8,6 +8,15 @@ y el proyecto sigue el [Versionado Semántico](https://semver.org/lang/es/).
 ## [No publicado]
 
 ### Añadido
+- **Tour de bienvenida en primera ejecución** (`OnboardingScreen`) con `HorizontalPager`:
+  explicación breve → una página por permiso (overlay y notificaciones) con botón directo para
+  concederlo → página para añadir el acceso rápido → página final de bienvenida. El estado se
+  guarda en `onboardingDone` (DataStore) para no repetirlo.
+- **Pantalla principal** rediseñada (`MainScreen`): tarjeta de estado ON/OFF con botón de
+  activar/desactivar, aviso y botón para **añadir el acceso rápido** a los Ajustes rápidos
+  (`StatusBarManager.requestAddTileService`, Android 13+) y los ajustes de aspecto, bordes e idioma.
+- Utilidades de permisos centralizadas (`ui/Permissions.kt`): overlay, notificaciones y alta del tile.
+
 - **Política de privacidad** bilingüe ([`PRIVACY.md`](PRIVACY.md)): la app no recopila datos.
 - **Internacionalización (ES/EN)** con recursos `values/` (español) y `values-en/` (inglés).
 - **Selector de idioma** en caliente desde los ajustes (Sistema / Español / English) mediante

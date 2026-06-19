@@ -38,4 +38,37 @@
     <string name="language_system">System default</string>
     <string name="language_spanish">Español</string>
     <string name="language_english">English</string>
+
+    <!-- Onboarding -->
+    <string name="onb_next">Next</string>
+    <string name="onb_back">Back</string>
+    <string name="onb_skip">Skip</string>
+    <string name="onb_finish">Get started</string>
+    <string name="onb_granted">Granted ✓</string>
+    <string name="onb_not_needed">Not required on your Android version ✓</string>
+
+    <string name="onb_intro_title">Welcome to Cinetosis</string>
+    <string name="onb_intro_body">Cinetosis reduces car sickness by showing dots at the edges of the screen that move in real time with the vehicle\'s acceleration. This way what you see matches what your body feels.</string>
+
+    <string name="onb_overlay_title">Permission: display over other apps</string>
+    <string name="onb_overlay_body">To draw the dots over any app (maps, reading, video…), Cinetosis needs the “Display over other apps” permission.</string>
+
+    <string name="onb_notif_title">Permission: notifications</string>
+    <string name="onb_notif_body">While the cues are active, a persistent notification keeps the service running. Allow notifications so it works properly.</string>
+    <string name="onb_notif_button">Allow notifications</string>
+
+    <string name="onb_tile_title">Quick tile</string>
+    <string name="onb_tile_body">Add a button to your Quick Settings (like the Wi-Fi one) to turn the cues on and off without opening the app.</string>
+    <string name="onb_tile_button">Add quick tile</string>
+    <string name="onb_tile_manual">On your Android version, add the “Cinetosis” tile manually from the Quick Settings editor.</string>
+
+    <string name="onb_finish_title">All set!</string>
+    <string name="onb_finish_body">Place your phone where you\'ll look during the trip and turn on the cues. Have a good trip!</string>
+
+    <!-- Main screen -->
+    <string name="main_status_on">Cues are on</string>
+    <string name="main_status_off">Cues are off</string>
+    <string name="main_tile_hint">Tip: add the Cinetosis quick tile to your Quick Settings to toggle it from anywhere.</string>
+    <string name="main_add_tile">Add quick tile</string>
+    <string name="content_desc_logo">Cinetosis logo</string>
 </resources>

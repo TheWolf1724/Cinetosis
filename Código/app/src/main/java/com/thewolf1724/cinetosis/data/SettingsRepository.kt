@@ -23,6 +23,7 @@ data class Settings(
     val edgeBottom: Boolean = true,
     val edgeLeft: Boolean = true,
     val edgeRight: Boolean = true,
+    val onboardingDone: Boolean = false,  // si el usuario ya completó el tour inicial
 ) {
     companion object {
         const val DEFAULT_COLOR: Int = 0xCCFFFFFF.toInt() // blanco semitransparente
@@ -41,6 +42,7 @@ class SettingsRepository(private val context: Context) {
         val BOTTOM = booleanPreferencesKey("edge_bottom")
         val LEFT = booleanPreferencesKey("edge_left")
         val RIGHT = booleanPreferencesKey("edge_right")
+        val ONBOARDING = booleanPreferencesKey("onboarding_done")
     }
 
     private fun Preferences.toSettings(): Settings = Settings(
@@ -52,6 +54,7 @@ class SettingsRepository(private val context: Context) {
         edgeBottom = this[Keys.BOTTOM] ?: true,
         edgeLeft = this[Keys.LEFT] ?: true,
         edgeRight = this[Keys.RIGHT] ?: true,
+        onboardingDone = this[Keys.ONBOARDING] ?: false,
     )
 
     val settings: Flow<Settings> = context.dataStore.data.map { it.toSettings() }
@@ -67,6 +70,7 @@ class SettingsRepository(private val context: Context) {
             prefs[Keys.BOTTOM] = updated.edgeBottom
             prefs[Keys.LEFT] = updated.edgeLeft
             prefs[Keys.RIGHT] = updated.edgeRight
+            prefs[Keys.ONBOARDING] = updated.onboardingDone
         }
     }
 }

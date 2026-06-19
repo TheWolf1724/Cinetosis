@@ -38,4 +38,37 @@
     <string name="language_system">Predeterminado del sistema</string>
     <string name="language_spanish">Español</string>
     <string name="language_english">English</string>
+
+    <!-- Onboarding (tour inicial) -->
+    <string name="onb_next">Siguiente</string>
+    <string name="onb_back">Atrás</string>
+    <string name="onb_skip">Saltar</string>
+    <string name="onb_finish">Empezar</string>
+    <string name="onb_granted">Concedido ✓</string>
+    <string name="onb_not_needed">No necesario en tu versión de Android ✓</string>
+
+    <string name="onb_intro_title">Bienvenido a Cinetosis</string>
+    <string name="onb_intro_body">Cinetosis reduce el mareo en el coche mostrando puntos en los bordes de la pantalla que se mueven en tiempo real con las aceleraciones del vehículo. Así lo que ves coincide con lo que siente tu cuerpo.</string>
+
+    <string name="onb_overlay_title">Permiso: mostrar sobre otras apps</string>
+    <string name="onb_overlay_body">Para dibujar los puntos por encima de cualquier app (mapas, lectura, vídeo…), Cinetosis necesita el permiso «Mostrar sobre otras aplicaciones».</string>
+
+    <string name="onb_notif_title">Permiso: notificaciones</string>
+    <string name="onb_notif_body">Mientras los indicadores están activos, una notificación permanente mantiene el servicio en marcha. Permite las notificaciones para que funcione correctamente.</string>
+    <string name="onb_notif_button">Permitir notificaciones</string>
+
+    <string name="onb_tile_title">Acceso rápido</string>
+    <string name="onb_tile_body">Añade un botón a los Ajustes rápidos (como el del Wi-Fi) para activar y desactivar los indicadores sin abrir la app.</string>
+    <string name="onb_tile_button">Añadir acceso rápido</string>
+    <string name="onb_tile_manual">En tu versión de Android, añade el icono «Cinetosis» a mano desde el editor de Ajustes rápidos.</string>
+
+    <string name="onb_finish_title">¡Todo listo!</string>
+    <string name="onb_finish_body">Coloca el teléfono donde lo vayas a mirar durante el trayecto y activa los indicadores. ¡Buen viaje!</string>
+
+    <!-- Pantalla principal -->
+    <string name="main_status_on">Indicadores activos</string>
+    <string name="main_status_off">Indicadores desactivados</string>
+    <string name="main_tile_hint">Consejo: añade el acceso rápido de Cinetosis a tus Ajustes rápidos para activarlo desde cualquier sitio.</string>
+    <string name="main_add_tile">Añadir acceso rápido</string>
+    <string name="content_desc_logo">Logotipo de Cinetosis</string>
 </resources>
