@@ -99,9 +99,9 @@
     <string name="section_detection">Automatic detection</string>
     <string name="detect_auto">Turn on automatically when driving</string>
     <string name="detect_mode">Detection mode</string>
-    <string name="mode_battery">Battery (recommended)</string>
-    <string name="mode_balanced">Balanced (GPS)</string>
-    <string name="mode_extreme">Maximum accuracy (GPS+)</string>
+    <string name="mode_battery">Battery · checks ~every 3 min (recommended)</string>
+    <string name="mode_balanced">Balanced · ~every 90 s</string>
+    <string name="mode_extreme">Max responsiveness · ~every 45 s</string>
     <string name="detect_boot">Start on phone boot</string>
     <string name="detect_powersave_note">If you enable the system battery saver, Battery mode will be used automatically.</string>
     <string name="detect_location_note">GPS modes request location permission. It is used only on the device (speed) and never transmitted.</string>

@@ -7,6 +7,7 @@ import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import com.thewolf1724.cinetosis.MainActivity
 import com.thewolf1724.cinetosis.R
+import com.thewolf1724.cinetosis.detection.DetectionState
 import com.thewolf1724.cinetosis.service.OverlayService
 
 /**
@@ -27,7 +28,12 @@ class CinetosisTileService : TileService() {
             return
         }
         val turnOn = !OverlayService.isRunning
-        if (turnOn) OverlayService.start(this) else OverlayService.stop(this)
+        if (turnOn) {
+            OverlayService.start(this)
+        } else {
+            DetectionState.recordManualOff(this)
+            OverlayService.stop(this)
+        }
         // Actualización visual inmediata: el flag isRunning del servicio se actualiza de forma
         // asíncrona, así que reflejamos directamente la acción que acabamos de ordenar.
         setTileState(turnOn)

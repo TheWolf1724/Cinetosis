@@ -80,21 +80,23 @@ Persistencia con **Jetpack DataStore (Preferences)**: sensibilidad, número de p
 color/tema, bordes activos y estado activado/desactivado. Expone `Flow`s que observan tanto la
 UI como el servicio.
 
-### `DetectionService` (`service/`) + `VehicleClassifier` (`detection/`)
-**Servicio en primer plano silencioso** que detecta de forma **offline** si el usuario va en coche
-y, en ese caso, **enciende `OverlayService` automáticamente** (el apagado es manual). Máquina de
-estados: `IDLE` → `CLASSIFYING` → `ACTIVE` → `COOLDOWN`.
-- En `IDLE` usa `TYPE_SIGNIFICANT_MOTION` (disparador por hardware, ~0 batería).
-- Al dispararse, muestrea el acelerómetro unos segundos y `VehicleClassifier` (lógica pura, con
-  tests) decide "coche vs andar/quieto". En modos GPS añade la velocidad de `LocationManager`.
-- **Tres modos** (`DetectionMode`): `BATTERY` (sensores), `BALANCED` y `EXTREME` (GPS). Si el
-  sistema entra en **ahorro de batería**, se fuerza `BATTERY`.
-- Tras encender el overlay pasa a `ACTIVE` (sensores apagados); si el usuario lo apaga, entra en
-  `COOLDOWN` para no reactivarlo al instante.
+### Detección "voy en coche" (`detection/`)
+Detecta de forma **offline** si el usuario va en coche y, en ese caso, **enciende `OverlayService`
+automáticamente** (el apagado es manual). Clave de diseño: se hace con **comprobaciones periódicas**
+(`AlarmManager`), **sin servicio en primer plano y por tanto sin notificación permanente** (como las
+apps que funcionan en segundo plano estando exentas de batería).
+- `DetectionScheduler`: programa una alarma que se reprograma a sí misma. El **intervalo** depende
+  del modo (`DetectionMode`): `BATTERY` ~3 min, `BALANCED` ~90 s, `EXTREME` ~45 s. En **ahorro de
+  batería** del sistema se usa el intervalo más largo.
+- `DetectionAlarmReceiver`: en cada disparo, con `goAsync()` (< 10 s) muestrea el **acelerómetro**
+  unos 8 s y `VehicleClassifier` (lógica pura, con tests) decide "coche vs andar/quieto". Si es
+  coche y hay permiso de overlay, enciende `OverlayService`. Solo usa el **acelerómetro** (sin GPS).
+- `DetectionState`: guarda en `SharedPreferences` el instante del último apagado manual para un
+  **cooldown** (no reactivar al instante tras apagarlo a mano).
 
 ### `BootReceiver` (`boot/`)
-Receptor de `BOOT_COMPLETED`: si el usuario lo activó, arranca `DetectionService` al encender el
-teléfono (solo modo sensores; los tipos de FGS con ubicación no pueden iniciarse desde el arranque).
+Receptor de `BOOT_COMPLETED`: si el usuario lo activó, **programa** la detección periódica al
+encender el teléfono (sin servicio en primer plano ni notificación).
 
 ### `MainActivity` + `ui/` (Compose)
 Pantalla de **ajustes e información**:
@@ -108,14 +110,14 @@ Pantalla de **ajustes e información**:
 | Permiso | Motivo |
 |---------|--------|
 | `SYSTEM_ALERT_WINDOW` | Dibujar el overlay sobre otras apps. |
-| `FOREGROUND_SERVICE` + `FOREGROUND_SERVICE_SPECIAL_USE` | Servicio en primer plano para overlay/sensores y detección. |
-| `FOREGROUND_SERVICE_LOCATION` | FGS de tipo ubicación, solo en los modos de detección con GPS. |
-| `ACCESS_FINE_LOCATION` (opcional) | Velocidad GPS para los modos de detección con GPS. En local, sin transmitir. |
-| `RECEIVE_BOOT_COMPLETED` | Autoinicio de la detección al encender el móvil (si se activa). |
-| `POST_NOTIFICATIONS` | Notificación del servicio en primer plano (Android 13+). |
+| `FOREGROUND_SERVICE` + `FOREGROUND_SERVICE_SPECIAL_USE` | Servicio en primer plano del overlay, solo mientras los indicadores están encendidos. |
+| `RECEIVE_BOOT_COMPLETED` | Programar la detección al encender el móvil (si se activa). |
+| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Pedir exención para que la detección periódica no se mate. |
+| `POST_NOTIFICATIONS` | Notificación del servicio en primer plano (solo con los indicadores activos). |
 
-**No** se declara permiso de Internet: la app es completamente offline (incluida la detección, que
-**no** usa Google Play Services).
+**No** se declara permiso de Internet **ni de ubicación**: la app es completamente offline (la
+detección usa solo el acelerómetro y **no** usa Google Play Services). La detección en segundo plano
+**no muestra notificación** (no es un servicio en primer plano).
 
 ## Decisiones de diseño
 

@@ -46,6 +46,10 @@ y el proyecto sigue el [Versionado Semántico](https://semver.org/lang/es/).
   puntos de movimiento en los bordes y variante monocroma para iconos temáticos.
 
 ### Cambiado
+- **Detección sin GPS ni ubicación:** ahora usa **solo el acelerómetro** (más privada y sin permiso
+  de ubicación). Los tres modos pasan a controlar la **frecuencia de comprobación** (Batería ~3 min,
+  Equilibrado ~90 s, Máxima respuesta ~45 s) en lugar de GPS. Se elimina el servicio `DetectionService`
+  y los permisos de ubicación/FGS-location.
 - **Overlay a la máxima capa posible y edge-to-edge:** el overlay usa `TYPE_APPLICATION_OVERLAY`
   (la capa más alta disponible para una app de terceros), con aceleración por hardware y cobertura
   de la zona del notch/cutout. Se blinda el cálculo de *insets* para que el borde superior nunca
@@ -69,6 +73,10 @@ y el proyecto sigue el [Versionado Semántico](https://semver.org/lang/es/).
   está activo, pero ahora es prácticamente invisible.
 
 ### Corregido
+- **La detección en segundo plano ya no muestra notificación permanente.** Se ha sustituido el
+  servicio en primer plano por **comprobaciones periódicas** (`AlarmManager` + `DetectionAlarmReceiver`
+  con `goAsync`), igual que las apps que trabajan en segundo plano estando exentas de batería. La
+  notificación solo aparece **mientras los indicadores están realmente encendidos**.
 - **Ahorro de batería:** el overlay **pausa los sensores y el dibujado cuando la pantalla se apaga**
   y los reanuda al encenderla (antes seguían activos sin sentido).
 - **Auto-cero del sensor:** `MotionEngine` resta una línea base lenta (sesgo/deriva del acelerómetro)

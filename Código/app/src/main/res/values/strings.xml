@@ -99,9 +99,9 @@
     <string name="section_detection">Detección automática</string>
     <string name="detect_auto">Encender solo al detectar coche</string>
     <string name="detect_mode">Modo de detección</string>
-    <string name="mode_battery">Batería (recomendado)</string>
-    <string name="mode_balanced">Equilibrado (GPS)</string>
-    <string name="mode_extreme">Máxima precisión (GPS+)</string>
+    <string name="mode_battery">Batería · comprueba cada ~3 min (recomendado)</string>
+    <string name="mode_balanced">Equilibrado · cada ~90 s</string>
+    <string name="mode_extreme">Máxima respuesta · cada ~45 s</string>
     <string name="detect_boot">Iniciar al encender el teléfono</string>
     <string name="detect_powersave_note">Si activas el ahorro de batería del sistema, se usará el modo Batería automáticamente.</string>
     <string name="detect_location_note">Los modos con GPS piden permiso de ubicación. Se usa solo en el dispositivo (velocidad) y nunca se transmite.</string>

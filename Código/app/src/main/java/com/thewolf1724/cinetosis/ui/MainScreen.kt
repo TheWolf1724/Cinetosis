@@ -64,7 +64,8 @@ import com.thewolf1724.cinetosis.R
 import com.thewolf1724.cinetosis.data.DetectionMode
 import com.thewolf1724.cinetosis.data.Settings
 import com.thewolf1724.cinetosis.data.SettingsRepository
-import com.thewolf1724.cinetosis.service.DetectionService
+import com.thewolf1724.cinetosis.detection.DetectionScheduler
+import com.thewolf1724.cinetosis.detection.DetectionState
 import com.thewolf1724.cinetosis.service.OverlayService
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -96,21 +97,18 @@ fun MainScreen() {
         ActivityResultContracts.RequestPermission(),
     ) { /* el resultado no bloquea el flujo */ }
 
-    val locationPermission = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission(),
-    ) { /* si se deniega, los modos GPS caen a detección por sensores */ }
-
-    // Mantiene el servicio de detección en marcha cuando procede (auto-encendido invisible).
+    // Programa o cancela la detección periódica (sin notificación) según los ajustes.
     LaunchedEffect(settings.autoDetect, settings.detectionMode, canDrawOverlay) {
         if (settings.autoDetect && canDrawOverlay) {
-            DetectionService.start(context, fromBoot = false)
-        } else if (DetectionService.isRunning) {
-            DetectionService.stop(context)
+            DetectionScheduler.schedule(context, settings.detectionMode)
+        } else {
+            DetectionScheduler.cancel(context)
         }
     }
 
     fun toggleOverlay() {
         if (serviceRunning) {
+            DetectionState.recordManualOff(context)
             OverlayService.stop(context)
             serviceRunning = false
         } else {
@@ -156,12 +154,7 @@ fun MainScreen() {
             DetectionSection(
                 settings = settings,
                 onAutoDetect = { v -> scope.launch { repository.update { it.copy(autoDetect = v) } } },
-                onMode = { m ->
-                    scope.launch { repository.update { it.copy(detectionMode = m) } }
-                    if (m != DetectionMode.BATTERY && !Permissions.hasLocation(context)) {
-                        locationPermission.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
-                    }
-                },
+                onMode = { m -> scope.launch { repository.update { it.copy(detectionMode = m) } } },
                 onBoot = { v -> scope.launch { repository.update { it.copy(autoStartOnBoot = v) } } },
             )
 
@@ -351,9 +344,6 @@ private fun DetectionSection(
         Text(stringResource(R.string.detect_off_note), style = MaterialTheme.typography.bodySmall)
         Text(stringResource(R.string.detect_powersave_note), style = MaterialTheme.typography.bodySmall)
         Text(stringResource(R.string.battery_opt_note), style = MaterialTheme.typography.bodySmall)
-        if (settings.detectionMode != DetectionMode.BATTERY) {
-            Text(stringResource(R.string.detect_location_note), style = MaterialTheme.typography.bodySmall)
-        }
     }
 }
 
