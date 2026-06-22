@@ -79,14 +79,14 @@ fun MainScreen() {
     val settings by repository.settings.collectAsState(initial = Settings())
 
     var canDrawOverlay by remember { mutableStateOf(Permissions.hasOverlay(context)) }
-    var serviceRunning by remember { mutableStateOf(OverlayService.isRunning) }
+    // Estado reactivo del overlay: se actualiza al instante aunque se active desde el acceso rápido.
+    val serviceRunning by OverlayService.isRunningFlow.collectAsState()
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 canDrawOverlay = Permissions.hasOverlay(context)
-                serviceRunning = OverlayService.isRunning
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -110,13 +110,11 @@ fun MainScreen() {
         if (serviceRunning) {
             DetectionState.recordManualOff(context)
             OverlayService.stop(context)
-            serviceRunning = false
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !Permissions.hasNotifications(context)) {
                 notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
             OverlayService.start(context)
-            serviceRunning = true
         }
     }
 

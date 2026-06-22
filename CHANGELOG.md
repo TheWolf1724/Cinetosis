@@ -73,6 +73,9 @@ y el proyecto sigue el [Versionado Semántico](https://semver.org/lang/es/).
   está activo, pero ahora es prácticamente invisible.
 
 ### Corregido
+- **Sincronización tile ↔ app:** el estado de los indicadores ahora es reactivo (`StateFlow`), así
+  que al activarlos/desactivarlos desde el acceso rápido la pantalla principal se actualiza al
+  instante (antes podía quedarse en «desactivado»).
 - **La detección en segundo plano ya no muestra notificación permanente.** Se ha sustituido el
   servicio en primer plano por **comprobaciones periódicas** (`AlarmManager` + `DetectionAlarmReceiver`
   con `goAsync`), igual que las apps que trabajan en segundo plano estando exentas de batería. La

@@ -33,6 +33,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -80,7 +83,7 @@ class OverlayService : Service() {
         // Solo activamos los sensores si la pantalla está encendida.
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         if (powerManager.isInteractive) resumeForScreen() else pauseForScreen()
-        isRunning = true
+        _isRunning.value = true
         refreshTile()
         return START_STICKY
     }
@@ -214,7 +217,7 @@ class OverlayService : Service() {
         dotsView?.let { windowManager.removeView(it) }
         dotsView = null
         scope.cancel()
-        isRunning = false
+        _isRunning.value = false
         refreshTile()
         super.onDestroy()
     }
@@ -228,10 +231,10 @@ class OverlayService : Service() {
         const val MIN_SHIFT_DP = 16f
         const val MAX_SHIFT_DP = 70f
 
-        /** Estado observable por la UI y el Tile. */
-        @Volatile
-        var isRunning: Boolean = false
-            private set
+        /** Estado observable por la UI (reactivo) y el Tile. */
+        private val _isRunning = MutableStateFlow(false)
+        val isRunningFlow: StateFlow<Boolean> = _isRunning.asStateFlow()
+        val isRunning: Boolean get() = _isRunning.value
 
         fun start(context: Context) {
             val intent = Intent(context, OverlayService::class.java).setAction(ACTION_START)
