@@ -22,6 +22,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.outlined.BatteryStd
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material.icons.outlined.Notifications
@@ -55,7 +56,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.thewolf1724.cinetosis.R
 import kotlinx.coroutines.launch
 
-private enum class PageKind { INTRO, OVERLAY, NOTIFICATIONS, TILE, FINISH }
+private enum class PageKind { INTRO, OVERLAY, NOTIFICATIONS, TILE, BATTERY, FINISH }
 
 /**
  * Tour de bienvenida en primera ejecución: explicación breve, una página por permiso (con botón
@@ -68,6 +69,7 @@ fun OnboardingScreen(onFinish: () -> Unit) {
 
     var canDrawOverlay by remember { mutableStateOf(Permissions.hasOverlay(context)) }
     var notifGranted by remember { mutableStateOf(Permissions.hasNotifications(context)) }
+    var ignoringBattery by remember { mutableStateOf(Permissions.isIgnoringBatteryOptimizations(context)) }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
@@ -75,6 +77,7 @@ fun OnboardingScreen(onFinish: () -> Unit) {
             if (event == Lifecycle.Event.ON_RESUME) {
                 canDrawOverlay = Permissions.hasOverlay(context)
                 notifGranted = Permissions.hasNotifications(context)
+                ignoringBattery = Permissions.isIgnoringBatteryOptimizations(context)
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -90,6 +93,7 @@ fun OnboardingScreen(onFinish: () -> Unit) {
         PageKind.OVERLAY,
         PageKind.NOTIFICATIONS,
         PageKind.TILE,
+        PageKind.BATTERY,
         PageKind.FINISH,
     )
     val pagerState = rememberPagerState(pageCount = { pages.size })
@@ -129,6 +133,7 @@ fun OnboardingScreen(onFinish: () -> Unit) {
                     kind = pages[index],
                     canDrawOverlay = canDrawOverlay,
                     notifGranted = notifGranted,
+                    ignoringBattery = ignoringBattery,
                     onGrantOverlay = {
                         context.startActivity(Permissions.overlaySettingsIntent(context))
                     },
@@ -136,6 +141,9 @@ fun OnboardingScreen(onFinish: () -> Unit) {
                         notifLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                     },
                     onAddTile = { Permissions.requestAddTile(context) },
+                    onBatteryExempt = {
+                        context.startActivity(Permissions.batteryOptimizationIntent(context))
+                    },
                 )
             }
 
@@ -189,9 +197,11 @@ private fun PageContent(
     kind: PageKind,
     canDrawOverlay: Boolean,
     notifGranted: Boolean,
+    ignoringBattery: Boolean,
     onGrantOverlay: () -> Unit,
     onAllowNotifications: () -> Unit,
     onAddTile: () -> Unit,
+    onBatteryExempt: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -211,6 +221,7 @@ private fun PageContent(
                 when (kind) {
                     PageKind.OVERLAY -> Icons.Outlined.Layers
                     PageKind.NOTIFICATIONS -> Icons.Outlined.Notifications
+                    PageKind.BATTERY -> Icons.Outlined.BatteryStd
                     else -> Icons.Outlined.Dashboard
                 },
             )
@@ -265,6 +276,15 @@ private fun PageContent(
                     )
                 }
             }
+            PageKind.BATTERY -> {
+                if (ignoringBattery) {
+                    GrantedLabel()
+                } else {
+                    FilledTonalButton(onClick = onBatteryExempt) {
+                        Text(stringResource(R.string.onb_battery_button))
+                    }
+                }
+            }
             else -> Unit
         }
     }
@@ -306,6 +326,7 @@ private fun titleOf(kind: PageKind): Int = when (kind) {
     PageKind.OVERLAY -> R.string.onb_overlay_title
     PageKind.NOTIFICATIONS -> R.string.onb_notif_title
     PageKind.TILE -> R.string.onb_tile_title
+    PageKind.BATTERY -> R.string.onb_battery_title
     PageKind.FINISH -> R.string.onb_finish_title
 }
 
@@ -314,5 +335,6 @@ private fun bodyOf(kind: PageKind): Int = when (kind) {
     PageKind.OVERLAY -> R.string.onb_overlay_body
     PageKind.NOTIFICATIONS -> R.string.onb_notif_body
     PageKind.TILE -> R.string.onb_tile_body
+    PageKind.BATTERY -> R.string.onb_battery_body
     PageKind.FINISH -> R.string.onb_finish_body
 }

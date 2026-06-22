@@ -1,5 +1,6 @@
 package com.thewolf1724.cinetosis.ui
 
+import android.annotation.SuppressLint
 import android.app.StatusBarManager
 import android.content.ComponentName
 import android.content.Context
@@ -8,6 +9,7 @@ import android.content.pm.PackageManager
 import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
+import android.os.PowerManager
 import android.provider.Settings
 import androidx.core.content.ContextCompat
 import com.thewolf1724.cinetosis.R
@@ -24,6 +26,20 @@ object Permissions {
     fun overlaySettingsIntent(context: Context): Intent =
         Intent(
             Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            Uri.parse("package:${context.packageName}"),
+        )
+
+    /** ¿La app está exenta de la optimización de batería? (Necesario para que la detección sobreviva.) */
+    fun isIgnoringBatteryOptimizations(context: Context): Boolean {
+        val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+        return pm.isIgnoringBatteryOptimizations(context.packageName)
+    }
+
+    /** Intent que pide al sistema eximir a la app de la optimización de batería. */
+    @SuppressLint("BatteryLife")
+    fun batteryOptimizationIntent(context: Context): Intent =
+        Intent(
+            Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
             Uri.parse("package:${context.packageName}"),
         )
 

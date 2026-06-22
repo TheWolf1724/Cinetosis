@@ -2,18 +2,23 @@ package com.thewolf1724.cinetosis.service
 
 import android.app.PendingIntent
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ServiceInfo
 import android.content.res.Configuration
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
+import android.os.PowerManager
 import android.service.quicksettings.TileService
 import android.view.Gravity
+import android.view.View
 import android.view.WindowManager
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.thewolf1724.cinetosis.CinetosisApp
@@ -42,6 +47,17 @@ class OverlayService : Service() {
     private lateinit var repository: SettingsRepository
     private var dotsView: DotsView? = null
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    private var screenReceiverRegistered = false
+
+    // Pausa overlay y sensores cuando la pantalla se apaga (ahorro de batería).
+    private val screenReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                Intent.ACTION_SCREEN_OFF -> pauseForScreen()
+                Intent.ACTION_SCREEN_ON -> resumeForScreen()
+            }
+        }
+    }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -60,7 +76,10 @@ class OverlayService : Service() {
         startForegroundCompat()
         addOverlay()
         observeSettings()
-        motionEngine.start()
+        registerScreenReceiver()
+        // Solo activamos los sensores si la pantalla está encendida.
+        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        if (powerManager.isInteractive) resumeForScreen() else pauseForScreen()
         isRunning = true
         refreshTile()
         return START_STICKY
@@ -72,6 +91,28 @@ class OverlayService : Service() {
             this,
             ComponentName(this, CinetosisTileService::class.java),
         )
+    }
+
+    private fun registerScreenReceiver() {
+        if (screenReceiverRegistered) return
+        val filter = IntentFilter().apply {
+            addAction(Intent.ACTION_SCREEN_OFF)
+            addAction(Intent.ACTION_SCREEN_ON)
+        }
+        ContextCompat.registerReceiver(this, screenReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
+        screenReceiverRegistered = true
+    }
+
+    /** Pantalla apagada: paramos sensores y ocultamos los puntos (no tiene sentido animarlos). */
+    private fun pauseForScreen() {
+        motionEngine.stop()
+        dotsView?.visibility = View.GONE
+    }
+
+    /** Pantalla encendida: reanudamos sensores y mostramos los puntos. */
+    private fun resumeForScreen() {
+        motionEngine.start()
+        dotsView?.visibility = View.VISIBLE
     }
 
     private fun addOverlay() {
@@ -165,6 +206,10 @@ class OverlayService : Service() {
     }
 
     override fun onDestroy() {
+        if (screenReceiverRegistered) {
+            unregisterReceiver(screenReceiver)
+            screenReceiverRegistered = false
+        }
         motionEngine.stop()
         dotsView?.let { windowManager.removeView(it) }
         dotsView = null

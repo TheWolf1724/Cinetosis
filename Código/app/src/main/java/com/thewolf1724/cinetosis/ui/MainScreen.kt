@@ -336,9 +336,21 @@ private fun DetectionSection(
             onMode(DetectionMode.EXTREME)
         }
         EdgeToggle(stringResource(R.string.detect_boot), settings.autoStartOnBoot, onBoot)
+
+        // Botón para eximir de la optimización de batería (que la detección no se mate).
+        val context = LocalContext.current
+        Spacer(Modifier.height(8.dp))
+        OutlinedButton(
+            onClick = { context.startActivity(Permissions.batteryOptimizationIntent(context)) },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(stringResource(R.string.battery_opt_button))
+        }
+
         Spacer(Modifier.height(8.dp))
         Text(stringResource(R.string.detect_off_note), style = MaterialTheme.typography.bodySmall)
         Text(stringResource(R.string.detect_powersave_note), style = MaterialTheme.typography.bodySmall)
+        Text(stringResource(R.string.battery_opt_note), style = MaterialTheme.typography.bodySmall)
         if (settings.detectionMode != DetectionMode.BATTERY) {
             Text(stringResource(R.string.detect_location_note), style = MaterialTheme.typography.bodySmall)
         }

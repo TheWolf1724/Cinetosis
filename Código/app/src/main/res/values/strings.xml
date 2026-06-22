@@ -70,6 +70,10 @@
     <string name="onb_tile_button">Añadir acceso rápido</string>
     <string name="onb_tile_manual">En tu versión de Android, añade el icono «Cinetosis» a mano desde el editor de Ajustes rápidos.</string>
 
+    <string name="onb_battery_title">Batería y autoinicio</string>
+    <string name="onb_battery_body">Para que el auto-encendido en coche funcione siempre, permite que Cinetosis ignore la optimización de batería. En algunos móviles (Xiaomi, Huawei, Samsung…) además debes activar el «autoinicio» de la app en los ajustes del sistema.</string>
+    <string name="onb_battery_button">Permitir</string>
+
     <string name="onb_finish_title">¡Todo listo!</string>
     <string name="onb_finish_body">Coloca el teléfono donde lo vayas a mirar durante el trayecto y activa los indicadores. ¡Buen viaje!</string>
 
@@ -102,6 +106,8 @@
     <string name="detect_powersave_note">Si activas el ahorro de batería del sistema, se usará el modo Batería automáticamente.</string>
     <string name="detect_location_note">Los modos con GPS piden permiso de ubicación. Se usa solo en el dispositivo (velocidad) y nunca se transmite.</string>
     <string name="detect_off_note">El apagado de los indicadores siempre es manual (desde aquí o el acceso rápido).</string>
+    <string name="battery_opt_button">Optimización de batería</string>
+    <string name="battery_opt_note">Si el auto-encendido deja de funcionar, comprueba que Cinetosis esté exenta de la optimización de batería y con el autoinicio permitido en los ajustes del sistema.</string>
     <string name="detect_notif_title">Cinetosis en segundo plano</string>
     <string name="detect_notif_text">Detección de bajo consumo activa.</string>
 </resources>

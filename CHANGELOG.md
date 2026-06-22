@@ -8,6 +8,9 @@ y el proyecto sigue el [Versionado Semántico](https://semver.org/lang/es/).
 ## [No publicado]
 
 ### Añadido
+- **Página de onboarding «Batería y autoinicio»** y **botón en ajustes** para pedir la exención de
+  optimización de batería, de modo que el auto-encendido en coche no lo mate el sistema (con guía
+  para el «autoinicio» de Xiaomi/Huawei/Samsung, etc.).
 - **Selector de color manual** de los puntos en ajustes: «Por defecto» (adaptativo claro/oscuro) o
   «Personalizado», con paleta de colores y ajuste fino RGB. Se modifica solo el **relleno**; el
   **halo/contorno** se mantiene automático para que el punto siga viéndose sobre cualquier fondo.
@@ -66,6 +69,10 @@ y el proyecto sigue el [Versionado Semántico](https://semver.org/lang/es/).
   está activo, pero ahora es prácticamente invisible.
 
 ### Corregido
+- **Ahorro de batería:** el overlay **pausa los sensores y el dibujado cuando la pantalla se apaga**
+  y los reanuda al encenderla (antes seguían activos sin sentido).
+- **Auto-cero del sensor:** `MotionEngine` resta una línea base lenta (sesgo/deriva del acelerómetro)
+  para que los puntos no queden desplazados de forma permanente; conserva las aceleraciones reales.
 - Los puntos ahora tienen **mayor recorrido** (configurable) y un **contorno/halo** contrastado
   para verse sobre cualquier fondo (un overlay no puede leer los píxeles del fondo real).
 - Los puntos respetan los **insets de las barras del sistema**, de modo que la barra de estado o de

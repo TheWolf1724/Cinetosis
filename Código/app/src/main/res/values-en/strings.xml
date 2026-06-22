@@ -70,6 +70,10 @@
     <string name="onb_tile_button">Add quick tile</string>
     <string name="onb_tile_manual">On your Android version, add the “Cinetosis” tile manually from the Quick Settings editor.</string>
 
+    <string name="onb_battery_title">Battery &amp; autostart</string>
+    <string name="onb_battery_body">For auto-on while driving to always work, allow Cinetosis to ignore battery optimization. On some phones (Xiaomi, Huawei, Samsung…) you must also enable the app\'s “autostart” in the system settings.</string>
+    <string name="onb_battery_button">Allow</string>
+
     <string name="onb_finish_title">All set!</string>
     <string name="onb_finish_body">Place your phone where you\'ll look during the trip and turn on the cues. Have a good trip!</string>
 
@@ -102,6 +106,8 @@
     <string name="detect_powersave_note">If you enable the system battery saver, Battery mode will be used automatically.</string>
     <string name="detect_location_note">GPS modes request location permission. It is used only on the device (speed) and never transmitted.</string>
     <string name="detect_off_note">Turning the cues off is always manual (from here or the quick tile).</string>
+    <string name="battery_opt_button">Battery optimization</string>
+    <string name="battery_opt_note">If auto-on stops working, make sure Cinetosis is exempt from battery optimization and has autostart allowed in the system settings.</string>
     <string name="detect_notif_title">Cinetosis in background</string>
     <string name="detect_notif_text">Low-power detection active.</string>
 </resources>

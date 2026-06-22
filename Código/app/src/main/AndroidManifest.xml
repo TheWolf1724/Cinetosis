@@ -18,6 +18,8 @@
 
     <!-- Autoinicio de la detección al encender el teléfono. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Pedir exención de la optimización de batería (para que la detección no se mate). -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <!-- Notificación del servicio en primer plano (Android 13+). -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
