@@ -113,7 +113,10 @@ Pantalla de **ajustes e información**:
 | `FOREGROUND_SERVICE` + `FOREGROUND_SERVICE_SPECIAL_USE` | Servicio en primer plano del overlay, solo mientras los indicadores están encendidos. |
 | `RECEIVE_BOOT_COMPLETED` | Programar la detección al encender el móvil (si se activa). |
 | `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Pedir exención para que la detección periódica no se mate. |
-| `POST_NOTIFICATIONS` | Notificación del servicio en primer plano (solo con los indicadores activos). |
+
+**No** se pide `POST_NOTIFICATIONS` a propósito: en Android 13+ la notificación del servicio del
+overlay no se muestra en la bandeja (el servicio sigue activo); la única visible es la del sistema
+(«mostrándose sobre otras apps»), que el sistema añade a toda app con superposición.
 
 **No** se declara permiso de Internet **ni de ubicación**: la app es completamente offline (la
 detección usa solo el acelerómetro y **no** usa Google Play Services). La detección en segundo plano

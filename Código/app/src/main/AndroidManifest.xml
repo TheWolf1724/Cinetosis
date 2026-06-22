@@ -15,8 +15,9 @@
     <!-- Pedir exención de la optimización de batería (para que la detección no se mate). -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
-    <!-- Notificación del servicio en primer plano (Android 13+). -->
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- NO se pide POST_NOTIFICATIONS a propósito: así, en Android 13+, la notificación del
+         servicio en primer plano del overlay NO aparece en la bandeja (el servicio sigue activo).
+         El usuario solo verá la notificación del sistema "mostrando sobre otras apps". -->
 
     <!-- La app necesita sensores de movimiento, pero no son estrictamente obligatorios
          para instalar (degradación elegante si faltan). -->

@@ -73,6 +73,10 @@ y el proyecto sigue el [Versionado Semántico](https://semver.org/lang/es/).
   está activo, pero ahora es prácticamente invisible.
 
 ### Corregido
+- **Una sola notificación cuando el overlay está activo:** la app ya **no pide** `POST_NOTIFICATIONS`,
+  así que en Android 13+ la notificación del servicio en primer plano del overlay no se muestra en la
+  bandeja (el servicio sigue funcionando). Queda solo la del sistema («mostrándose sobre otras
+  apps»), que ninguna app puede ocultar. Se elimina la página de notificaciones del onboarding.
 - **Sincronización tile ↔ app:** el estado de los indicadores ahora es reactivo (`StateFlow`), así
   que al activarlos/desactivarlos desde el acceso rápido la pantalla principal se actualiza al
   instante (antes podía quedarse en «desactivado»).

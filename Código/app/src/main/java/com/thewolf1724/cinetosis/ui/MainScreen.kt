@@ -1,10 +1,6 @@
 package com.thewolf1724.cinetosis.ui
 
-import android.Manifest
 import android.graphics.Color as AndroidColor
-import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -93,10 +89,6 @@ fun MainScreen() {
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    val notificationPermission = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission(),
-    ) { /* el resultado no bloquea el flujo */ }
-
     // Programa o cancela la detección periódica (sin notificación) según los ajustes.
     LaunchedEffect(settings.autoDetect, settings.detectionMode, canDrawOverlay) {
         if (settings.autoDetect && canDrawOverlay) {
@@ -111,9 +103,6 @@ fun MainScreen() {
             DetectionState.recordManualOff(context)
             OverlayService.stop(context)
         } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !Permissions.hasNotifications(context)) {
-                notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
             OverlayService.start(context)
         }
     }

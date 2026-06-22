@@ -32,8 +32,10 @@
 - **Autoinicio (`RECEIVE_BOOT_COMPLETED`)**: programar la detección al encender el móvil, si lo activas.
 - **Exención de batería (`REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`)**: para que la detección periódica no
   la mate el sistema.
-- **Notificaciones (`POST_NOTIFICATIONS`)**: mostrar la notificación del servicio en primer plano
-  **solo mientras los indicadores están activos** (la detección en segundo plano no muestra ninguna).
+
+La app **no pide el permiso de notificaciones** (`POST_NOTIFICATIONS`): así, en Android 13+, la
+notificación del servicio en primer plano del overlay no aparece en la bandeja (el servicio sigue
+funcionando). La única notificación visible es la del propio sistema, «mostrándose sobre otras apps».
 
 ### Niños
 La app no está dirigida a menores y, al no recopilar datos, no trata información de ningún
@@ -72,8 +74,10 @@ Para cualquier duda, abre un *issue* en el repositorio de GitHub:
   running **only while the cues are on**.
 - **Autostart (`RECEIVE_BOOT_COMPLETED`)**: schedule detection on boot, if you enable it.
 - **Battery exemption (`REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`)**: so the periodic detection isn't killed.
-- **Notifications (`POST_NOTIFICATIONS`)**: show the foreground-service notification **only while the
-  cues are active** (background detection shows none).
+
+The app **does not request the notification permission** (`POST_NOTIFICATIONS`): this way, on
+Android 13+, the overlay foreground-service notification does not appear in the drawer (the service
+still runs). The only visible notification is the system's own "displaying over other apps" notice.
 
 ### Children
 The app is not directed at children and, since it collects no data, it processes no user
