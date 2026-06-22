@@ -9,16 +9,39 @@ import com.thewolf1724.cinetosis.MainActivity
 import com.thewolf1724.cinetosis.R
 import com.thewolf1724.cinetosis.detection.DetectionState
 import com.thewolf1724.cinetosis.service.OverlayService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 /**
- * Quick Settings Tile: permite activar o desactivar el overlay desde la barra de notificaciones.
+ * Quick Settings Tile: activa o desactiva el overlay desde la barra de notificaciones.
  * Si falta el permiso «Mostrar sobre otras apps», abre la app para concederlo.
+ *
+ * El estado visual se sincroniza **en tiempo real** observando [OverlayService.isRunningFlow]
+ * mientras el panel está abierto, de modo que el tile refleja siempre el estado real del overlay.
  */
 class CinetosisTileService : TileService() {
 
+    private var scope: CoroutineScope? = null
+
     override fun onStartListening() {
         super.onStartListening()
-        updateTile()
+        val newScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+        scope = newScope
+        // StateFlow reemite el valor actual al suscribirse, así que el tile queda sincronizado
+        // de inmediato y se actualiza con cada cambio (también al activar desde la app o auto).
+        OverlayService.isRunningFlow
+            .onEach { running -> setTileState(running) }
+            .launchIn(newScope)
+    }
+
+    override fun onStopListening() {
+        scope?.cancel()
+        scope = null
+        super.onStopListening()
     }
 
     override fun onClick() {
@@ -27,16 +50,14 @@ class CinetosisTileService : TileService() {
             openAppForPermission()
             return
         }
-        val turnOn = !OverlayService.isRunning
-        if (turnOn) {
-            OverlayService.start(this)
-        } else {
+        if (OverlayService.isRunning) {
             DetectionState.recordManualOff(this)
             OverlayService.stop(this)
+        } else {
+            OverlayService.start(this)
         }
-        // Actualización visual inmediata: el flag isRunning del servicio se actualiza de forma
-        // asíncrona, así que reflejamos directamente la acción que acabamos de ordenar.
-        setTileState(turnOn)
+        // Feedback inmediato; el StateFlow confirmará el estado real en cuanto cambie el servicio.
+        setTileState(!OverlayService.isRunning)
     }
 
     private fun openAppForPermission() {
@@ -56,9 +77,6 @@ class CinetosisTileService : TileService() {
             startActivityAndCollapse(intent)
         }
     }
-
-    /** Sincroniza el tile con el estado real del servicio (al abrir la bandeja de Ajustes rápidos). */
-    private fun updateTile() = setTileState(OverlayService.isRunning)
 
     private fun setTileState(active: Boolean) {
         val tile = qsTile ?: return

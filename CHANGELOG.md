@@ -73,6 +73,9 @@ y el proyecto sigue el [Versionado Semántico](https://semver.org/lang/es/).
   está activo, pero ahora es prácticamente invisible.
 
 ### Corregido
+- **El acceso rápido (tile) ahora cambia de estado visualmente al pulsarlo:** observa
+  `OverlayService.isRunningFlow` mientras el panel está abierto, reflejando el estado real en
+  tiempo real (antes funcionaba pero el icono podía no actualizarse).
 - **Una sola notificación cuando el overlay está activo:** la app ya **no pide** `POST_NOTIFICATIONS`,
   así que en Android 13+ la notificación del servicio en primer plano del overlay no se muestra en la
   bandeja (el servicio sigue funcionando). Queda solo la del sistema («mostrándose sobre otras
